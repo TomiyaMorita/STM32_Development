@@ -1,0 +1,4 @@
+../TMC-EvalSystem-master/tmc/VitalSignsMonitor.c:38:6:heartBeat	16	static
+../TMC-EvalSystem-master/tmc/VitalSignsMonitor.c:53:6:checkVM	16	static
+../TMC-EvalSystem-master/tmc/VitalSignsMonitor.c:117:6:vitalsignsmonitor_checkVitalSigns	16	static
+../TMC-EvalSystem-master/tmc/VitalSignsMonitor.c:195:6:vitalsignsmonitor_clearOvervoltageErrors	4	static

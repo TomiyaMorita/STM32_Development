@@ -1,0 +1,8 @@
+../TMC_API/tmc/BoardAssignment.c:14:9:Board_assign	24	static
+../TMC_API/tmc/BoardAssignment.c:79:9:Board_supported	24	static
+../TMC_API/tmc/BoardAssignment.c:94:16:assignCh1	32	static
+../TMC_API/tmc/BoardAssignment.c:114:16:assignCh2	32	static
+../TMC_API/tmc/BoardAssignment.c:142:13:hookDriverSPI	24	static
+../TMC_API/tmc/BoardAssignment.c:183:13:unassign	16	static
+../TMC_API/tmc/BoardAssignment.c:188:6:periodicJob	16	static
+../TMC_API/tmc/BoardAssignment.c:193:6:deInit	48	static

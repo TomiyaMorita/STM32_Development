@@ -1,0 +1,16 @@
+main.c:108:6:Step0	8	static
+main.c:123:6:Dir0	0	static
+main.c:152:6:prepareMovement.part.0	24	static
+main.c:94:6:HAL_GPIO_EXTI_Callback	8	static
+main.c:128:6:resetStepperInfo	0	static
+main.c:140:6:resetStepper	0	static
+main.c:152:6:prepareMovement	24	static
+main.c:170:6:prepareAbsoluteMovement	24	static
+main.c:186:6:setNextInterruptInterval	0	static
+main.c:209:6:HAL_TIM_OC_DelayElapsedCallback	24	static
+main.c:270:6:sensorStateInit	8	static
+main.c:276:6:runAndWait	0	static
+main.c:281:6:stepperHoming	40	static
+main.c:395:6:SystemClock_Config	104	static,ignoring_inline_asm
+main.c:319:5:main	136	static,ignoring_inline_asm
+main.c:562:6:Error_Handler	0	static,ignoring_inline_asm

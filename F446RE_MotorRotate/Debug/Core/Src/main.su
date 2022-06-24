@@ -1,0 +1,13 @@
+../Core/Src/main.c:90:6:Step0	8	static
+../Core/Src/main.c:97:6:Dir0	16	static
+../Core/Src/main.c:103:6:motorrotate	24	static
+../Core/Src/main.c:120:6:setNextInterruptInterval	16	static
+../Core/Src/main.c:136:6:rotationalprocess	16	static
+../Core/Src/main.c:151:6:HAL_TIM_OC_DelayElapsedCallback	16	static
+../Core/Src/main.c:160:6:runAndWait	8	static
+../Core/Src/main.c:171:5:main	40	static
+../Core/Src/main.c:249:6:SystemClock_Config	88	static
+../Core/Src/main.c:297:13:MX_TIM3_Init	64	static
+../Core/Src/main.c:355:13:MX_USART2_UART_Init	8	static
+../Core/Src/main.c:388:13:MX_GPIO_Init	48	static
+../Core/Src/main.c:434:6:Error_Handler	4	static,ignoring_inline_asm

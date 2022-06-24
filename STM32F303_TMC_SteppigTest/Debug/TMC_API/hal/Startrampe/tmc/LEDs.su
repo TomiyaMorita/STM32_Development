@@ -1,0 +1,7 @@
+../TMC_API/hal/Startrampe/tmc/LEDs.c:30:13:init	8	static
+../TMC_API/hal/Startrampe/tmc/LEDs.c:38:13:onStat	4	static
+../TMC_API/hal/Startrampe/tmc/LEDs.c:43:13:onError	4	static
+../TMC_API/hal/Startrampe/tmc/LEDs.c:48:13:offStat	4	static
+../TMC_API/hal/Startrampe/tmc/LEDs.c:53:13:offError	4	static
+../TMC_API/hal/Startrampe/tmc/LEDs.c:58:13:toggleStat	4	static
+../TMC_API/hal/Startrampe/tmc/LEDs.c:63:13:toggleError	4	static

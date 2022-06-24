@@ -1,0 +1,9 @@
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:68:6:PORTB_IRQHandler	16	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:118:6:FTM2_IRQHandler	4	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:134:6:IDDetection_init	8	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:187:6:IDDetection_deInit	8	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:198:16:assign	16	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:242:9:IDDetection_detect	16	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:255:6:IDDetection_initialScan	16	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:266:12:detectID_Monoflop	24	static
+../TMC-EvalSystem-master/tmc/IdDetection_Landungsbruecke.c:365:12:detectID_EEPROM	24	static

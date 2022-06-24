@@ -1,0 +1,6 @@
+../TMC_API/tmc/EEPROM.c:34:6:eeprom_init	48	static
+../TMC_API/tmc/EEPROM.c:61:9:eeprom_check	32	static
+../TMC_API/tmc/EEPROM.c:117:6:eeprom_write_byte	24	static
+../TMC_API/tmc/EEPROM.c:176:6:eeprom_write_array	32	static
+../TMC_API/tmc/EEPROM.c:263:9:eeprom_read_byte	24	static
+../TMC_API/tmc/EEPROM.c:300:6:eeprom_read_array	40	static
