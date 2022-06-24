@@ -60,8 +60,8 @@ all: main-build
 main-build: STMF446_CAN_1command.elf secondary-outputs
 
 # Tool invocations
-STMF446_CAN_1command.elf STMF446_CAN_1command.map: $(OBJS) $(USER_OBJS) /Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/STMF446_CAN_1command/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STMF446_CAN_1command.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/STMF446_CAN_1command/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_CAN_1command.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STMF446_CAN_1command.elf STMF446_CAN_1command.map: $(OBJS) $(USER_OBJS) /Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_CAN_1command/STM32F446RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STMF446_CAN_1command.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_CAN_1command/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_CAN_1command.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

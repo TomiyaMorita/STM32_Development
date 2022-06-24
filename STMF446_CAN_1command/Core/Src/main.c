@@ -78,7 +78,6 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 
-
 	sFilterConfig.FilterBank = 0;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
@@ -103,9 +102,9 @@ int main(void)
 	{
 		Error_Handler();
 	}
-	HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig);
-	HAL_CAN_Start(&hcan1);
-	HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+//	HAL_CAN_ConfigFilter(&hcan1, &sFilterConfig);
+//	HAL_CAN_Start(&hcan1);
+//	HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
 
 	TxHeader.StdId=0x141;
 	//TxHeader.ExtId=0x01;

@@ -1,0 +1,10 @@
+01:51:13 **** Incremental Build of configuration Debug for project STMF446_CAN_1command ****
+make -j7 all 
+arm-none-eabi-size   STMF446_CAN_1command.elf 
+   text	   data	    bss	    dec	    hex	filename
+  15132	     24	   1792	  16948	   4234	STMF446_CAN_1command.elf
+Finished building: default.size.stdout
+ 
+
+01:51:14 Build Finished. 0 errors, 0 warnings. (took 304ms)
+
