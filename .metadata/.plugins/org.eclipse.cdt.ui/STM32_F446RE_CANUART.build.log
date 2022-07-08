@@ -1,0 +1,10 @@
+13:45:29 **** Incremental Build of configuration Debug for project STM32_F446RE_CANUART ****
+make -j7 all 
+arm-none-eabi-size   STM32_F446RE_CANUART.elf 
+   text	   data	    bss	    dec	    hex	filename
+  19616	     36	   1980	  21632	   5480	STM32_F446RE_CANUART.elf
+Finished building: default.size.stdout
+ 
+
+13:45:30 Build Finished. 0 errors, 0 warnings. (took 479ms)
+

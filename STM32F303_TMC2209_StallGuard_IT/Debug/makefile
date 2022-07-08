@@ -63,8 +63,8 @@ all: main-build
 main-build: STM32F303_TMC2209_StallGuard_IT.elf secondary-outputs
 
 # Tool invocations
-STM32F303_TMC2209_StallGuard_IT.elf STM32F303_TMC2209_StallGuard_IT.map: $(OBJS) $(USER_OBJS) /Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/STM32F303_TMC2209_StallGuard_IT/STM32F303K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32F303_TMC2209_StallGuard_IT.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/STM32F303_TMC2209_StallGuard_IT/STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F303_TMC2209_StallGuard_IT.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+STM32F303_TMC2209_StallGuard_IT.elf STM32F303_TMC2209_StallGuard_IT.map: $(OBJS) $(USER_OBJS) /Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_StallGuard_IT/STM32F303K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "STM32F303_TMC2209_StallGuard_IT.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_StallGuard_IT/STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F303_TMC2209_StallGuard_IT.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

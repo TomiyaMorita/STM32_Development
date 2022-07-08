@@ -1,0 +1,22 @@
+1656311008458	Delete resource 'STMF446_CAN_UART/STMF446_CAN_1command Debug.launch'
+1656311016487	Delete resource 'STMF446_CAN_UART/Debug/STMF446_CAN_1command.elf'
+1656311025598	Delete 2 resources
+1656311033016	Delete 2 resources
+1656330142076	Rename resource 'STMF446_CAN_UART'
+1656330255497	Delete 2 resources
+1656330259862	Delete resource 'STMF446_CAN_UART_RMDCommand/Debug/STMF446_CAN_UART.elf'
+1656330271176	Delete resource 'STMF446_CAN_UART_RMDCommand/STMF446_CAN_UART Debug.launch'
+1656405354605	Delete 2 resources
+1656405368541	Delete resource 'STMF446_CAN_UART_RMD_SetUp/Debug/STMF446_CAN_UART_RMDCommand.elf'
+1656405376825	Delete 2 resources
+1656408994030	Delete resource 'STMF446_CAN_UART_RMD_SetUp'
+1656409055911	Delete resource 'STMF446_CAN_UART_RMDSETUP/STMF446_CAN_UART Debug.launch'
+1656409936001	Delete resource 'STMF446_CAN_1command'
+1656409947148	Delete resource 'stm32_f303k8_can2odrive_test'
+1656409953221	Delete resource 'stm32_f446_usart2can'
+1656526499025	Delete resource 'STMF446_CAN_UART_RMDSETUP/STMF446_RMD_SteppingMotor_Demo.ioc'
+1656527440669	Delete resource 'STM32F303_TMC2209_StallGuard'
+1656527448162	Delete resource 'STMF446_CAN_UART_Command'
+1656532461006	Delete resource 'STMF446_RMD_SteppingMotor_Demo'
+1656532491259	Delete resource 'STMF446_RMD_SteppingMotor_Demo/STMF446_CAN_UART_RMDSETUP Debug.launch'
+1656588864418	Delete resource 'STMF446_SteppingMotor/STMF446_RMD_SteppingMotor_Demo Debug.launch'

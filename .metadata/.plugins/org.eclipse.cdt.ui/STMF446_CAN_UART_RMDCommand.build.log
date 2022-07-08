@@ -1,0 +1,10 @@
+13:45:30 **** Incremental Build of configuration Debug for project STMF446_CAN_UART_RMDCommand ****
+make -j7 all 
+arm-none-eabi-size   STMF446_CAN_UART_RMDCommand.elf 
+   text	   data	    bss	    dec	    hex	filename
+  21264	    120	   1824	  23208	   5aa8	STMF446_CAN_UART_RMDCommand.elf
+Finished building: default.size.stdout
+ 
+
+13:45:30 Build Finished. 0 errors, 0 warnings. (took 335ms)
+

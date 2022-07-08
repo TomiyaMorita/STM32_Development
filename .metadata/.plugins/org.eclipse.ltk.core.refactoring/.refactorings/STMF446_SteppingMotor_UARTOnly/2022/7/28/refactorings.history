@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;STMF446_SteppingMotor_UARTOnly/STMF446_SteppingMotor.ioc&apos; to &apos;STMF446_SteppingMotor_UARTOnly.ioc&apos;" description="Rename resource &apos;STMF446_SteppingMotor.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="STMF446_SteppingMotor.ioc" name="STMF446_SteppingMotor_UARTOnly.ioc" stamp="1656918551161" updateReferences="true"/>
+</session>

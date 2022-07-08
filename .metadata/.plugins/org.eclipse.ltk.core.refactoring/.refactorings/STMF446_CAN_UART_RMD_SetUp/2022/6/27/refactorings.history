@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;STMF446_CAN_UART_RMD_SetUp/STMF446_CAN_UART_RMDCommand.ioc&apos; to &apos;STMF446_CAN_UART_RMD_SetUp.ioc&apos;" description="Rename resource &apos;STMF446_CAN_UART_RMDCommand.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="STMF446_CAN_UART_RMDCommand.ioc" name="STMF446_CAN_UART_RMD_SetUp.ioc" stamp="1656405346165" updateReferences="true"/>
+</session>

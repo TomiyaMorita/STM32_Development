@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workingSetManager>
+<workingSet editPageId="org.eclipse.cdt.ui.CElementWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1656407973381_1" label="STM446_CAN_UART_RMD_SetUp" name="STM446_CAN_UART_RMD_SetUp"/>
 <workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1656087798904_0" label="Window Working Set" name="Aggregate for window 1656087798904"/>
+<mruList name="STM446_CAN_UART_RMD_SetUp"/>
 </workingSetManager>

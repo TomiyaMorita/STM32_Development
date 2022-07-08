@@ -1,0 +1,27 @@
+01:04:07 **** Incremental Build of configuration Debug for project STM32F303_TMC2209_UARTOnly ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F303x8 -c -I/Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/STM32F303_TMC_SteppingTest_notLib -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'currentcheck':
+../Core/Src/main.c:168:10: warning: variable 'value' set but not used [-Wunused-but-set-variable]
+  168 |  int32_t value=0;
+      |          ^~~~~
+../Core/Src/main.c:167:10: warning: unused variable 'stall_value' [-Wunused-variable]
+  167 |  int32_t stall_value=0;
+      |          ^~~~~~~~~~~
+../Core/Src/main.c:166:10: warning: unused variable 'SGTHRS_value' [-Wunused-variable]
+  166 |  int32_t SGTHRS_value = 0;
+      |          ^~~~~~~~~~~~
+arm-none-eabi-gcc -o "STM32F303_TMC2209_UARTOnly.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_UARTOnly/STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F303_TMC2209_UARTOnly.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STM32F303_TMC2209_UARTOnly.elf
+ 
+arm-none-eabi-size   STM32F303_TMC2209_UARTOnly.elf 
+arm-none-eabi-objdump -h -S  STM32F303_TMC2209_UARTOnly.elf  > "STM32F303_TMC2209_UARTOnly.list"
+   text	   data	    bss	    dec	    hex	filename
+  26180	    120	   3552	  29852	   749c	STM32F303_TMC2209_UARTOnly.elf
+Finished building: default.size.stdout
+ 
+Finished building: STM32F303_TMC2209_UARTOnly.list
+ 
+
+01:04:10 Build Finished. 0 errors, 3 warnings. (took 2s.690ms)
+

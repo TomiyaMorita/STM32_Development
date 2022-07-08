@@ -1,0 +1,7 @@
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.0.202111181127/tools/arm-none-eabi/include/math.h:394:14:fmaxf	16	static
+/Applications/STM32CubeIDE.app/Contents/Eclipse/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.10.3-2021.10.macos64_1.0.0.202111181127/tools/arm-none-eabi/include/math.h:395:14:fminf	16	static
+../Core/Src/math_ops.c:14:7:fmaxf3	24	static
+../Core/Src/math_ops.c:19:7:fminf3	24	static
+../Core/Src/math_ops.c:24:6:limit_norm	32	static
+../Core/Src/math_ops.c:34:5:float_to_uint	32	static
+../Core/Src/math_ops.c:42:7:uint_to_float	32	static

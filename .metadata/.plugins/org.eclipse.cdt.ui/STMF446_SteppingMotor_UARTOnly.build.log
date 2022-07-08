@@ -1,0 +1,17 @@
+18:37:24 **** Incremental Build of configuration Debug for project STMF446_SteppingMotor_UARTOnly ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_RMD_SteppingMotor_Demo -I../Core/Inc -I"/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_SteppingMotor_UARTOnly/tmc" -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "STMF446_SteppingMotor_UARTOnly.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_SteppingMotor_UARTOnly/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_SteppingMotor_UARTOnly.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_SteppingMotor_UARTOnly.elf
+ 
+arm-none-eabi-size   STMF446_SteppingMotor_UARTOnly.elf 
+arm-none-eabi-objdump -h -S  STMF446_SteppingMotor_UARTOnly.elf  > "STMF446_SteppingMotor_UARTOnly.list"
+   text	   data	    bss	    dec	    hex	filename
+  27616	    120	   3576	  31312	   7a50	STMF446_SteppingMotor_UARTOnly.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_SteppingMotor_UARTOnly.list
+ 
+
+18:37:25 Build Finished. 0 errors, 0 warnings. (took 1s.199ms)
+

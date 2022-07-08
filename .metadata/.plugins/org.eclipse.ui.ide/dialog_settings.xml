@@ -9,6 +9,7 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/stm32_f446_usart2can"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/stm32_f303k8_can2odrive_test"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_CAN_1command"/>
 		</list>
