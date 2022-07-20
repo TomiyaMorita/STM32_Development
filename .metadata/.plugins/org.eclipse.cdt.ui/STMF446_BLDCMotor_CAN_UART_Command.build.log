@@ -1,0 +1,10 @@
+03:34:38 **** Incremental Build of configuration Debug for project STMF446_BLDCMotor_CAN_UART_Command ****
+make -j7 all 
+arm-none-eabi-size   STMF446_BLDCMotor_CAN_UART_Command.elf 
+   text	   data	    bss	    dec	    hex	filename
+  36448	    484	   1860	  38792	   9788	STMF446_BLDCMotor_CAN_UART_Command.elf
+Finished building: default.size.stdout
+ 
+
+03:34:39 Build Finished. 0 errors, 0 warnings. (took 785ms)
+

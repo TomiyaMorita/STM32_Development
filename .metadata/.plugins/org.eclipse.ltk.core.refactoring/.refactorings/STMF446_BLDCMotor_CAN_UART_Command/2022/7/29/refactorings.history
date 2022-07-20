@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;STMF446_BLDCMotor_CAN_UART_Command/STMF446_BLDCMotor_CAN_UART_test.ioc&apos; to &apos;STMF446_BLDCMotor_CAN_UART_Command.ioc&apos;" description="Rename resource &apos;STMF446_BLDCMotor_CAN_UART_test.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="STMF446_BLDCMotor_CAN_UART_test.ioc" name="STMF446_BLDCMotor_CAN_UART_Command.ioc" stamp="1657532644468" updateReferences="true"/>
+</session>

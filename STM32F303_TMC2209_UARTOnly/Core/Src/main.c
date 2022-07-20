@@ -163,9 +163,9 @@ static inline TMC2209TypeDef *motorToIC(uint8_t motor)
 }
 
 void currentcheck(){
-	int32_t SGTHRS_value = 0;
-	int32_t stall_value=0;
-	int32_t value=0;
+//	int32_t SGTHRS_value = 0;
+//	int32_t stall_value=0;
+//	int32_t value=0;
 
 //	stall_value=tmc2209_readInt(&TMC2209,0x06);
 //	stall_value=TMC2209_FIELD_READ(&TMC2209, 0x06, TMC2209_DIAG_MASK, TMC2209_DIAG_SHIFT);
@@ -199,9 +199,9 @@ void currentcheck(){
 	//	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_DIAG_MASK, TMC2209_DIAG_SHIFT,value);
 	//	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IOIN, TMC2209_DIAG_MASK, TMC2209_DIAG_SHIFT);
+//		value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IOIN, TMC2209_DIAG_MASK, TMC2209_DIAG_SHIFT);
 //		printf("DIAG : %ld\r\n", value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
+//		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
 }
 
@@ -232,7 +232,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 void TMCsetup(){
 	int32_t value = 0;
 
-	value = 22;
+	value = 16;
 	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IRUN_MASK, TMC2209_IRUN_SHIFT, value);	//実行電流
 	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 	HAL_Delay(100);
@@ -331,7 +331,7 @@ void TMCsetup(){
 	value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLDDELAY_MASK, TMC2209_IHOLDDELAY_SHIFT);
 	printf("IHOLDDELAY: %ld\r\n", value);
 
-	value=100;											//SG_RESULTと比較して、
+	value=50;											//SG_RESULTと比較して、
 	tmc2209_writeInt(&TMC2209, TMC2209_SGTHRS, value);
 	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 	value = tmc2209_readInt(&TMC2209, TMC2209_SGTHRS);
@@ -383,6 +383,9 @@ void TMCsetup(){
 	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 	printf("frequency: %ld\r\n", value);
 
+//	value = 0;
+//	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_INDEX_OTPW_MASK, TMC2209_INDEX_OTPW_SHIFT,value);
+
 }
 
 /* USER CODE END 0 */
@@ -402,7 +405,8 @@ int main(void)
 //	char back[] ="back turn\r\n";
 	char nonans[] ="Not Understand \r\n";
 	char rxbuf[1];
-	uint32_t value=0;
+	int value=0;
+	int setvalue=0;
 
   /* USER CODE END 1 */
 
@@ -432,12 +436,16 @@ int main(void)
 //  TMCsetup();
   printf("Hello\r\n");
   HAL_UART_Transmit(&huart2,(uint8_t *)start,sizeof(start),3000);
+  TMCsetup();
   //HAL_TIM_Base_Start_IT(&htim2);
 //  HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);
 
   rxbuf[0]=0;
   uartflag1=0;
   uint8_t stall_value=0;
+  int setrev;
+  int motorrev;
+//  uint8_t index_value=0;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -455,10 +463,17 @@ int main(void)
 //		  ;
 //	  }
 	  HAL_UART_Transmit(&huart2,(uint8_t *)rxbuf,sizeof(rxbuf),100);
-//	  stall_value=0;
-	  stall_value=TMC2209_FIELD_READ(&TMC2209, 0x06, TMC2209_DIAG_MASK, TMC2209_DIAG_SHIFT);
+	  stall_value=0;
+	  stall_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IOIN, TMC2209_DIAG_MASK, TMC2209_DIAG_SHIFT);
+//	  index_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_MSCNT, TMC2209_MSCNT_MASK, TMC2209_MSCNT_SHIFT);
+//	  index_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_MSCURACT, TMC2209_CUR_A_MASK, TMC2209_CUR_A_SHIFT);
+
+//	  index_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_INDEX_STEP_MASK, TMC2209_INDEX_STEP_SHIFT);
+//	  index_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_INDEX_OTPW_MASK, TMC2209_INDEX_OTPW_SHIFT);
 	  HAL_Delay(10);
 //	  printf("stall: %d \r\n",stall_value);
+//	  printf("index: %d \r\n",index_value);
+
 	  if(stall_value==1){
 		  value = 0;
 		  TMC2209_FIELD_UPDATE(&TMC2209, 0x22, TMC2209_VACTUAL_MASK, TMC2209_VACTUAL_SHIFT,value);
@@ -487,13 +502,30 @@ int main(void)
 			  break;
 
 		  case'1':
-			  value = 10000;
-			  TMC2209_FIELD_UPDATE(&TMC2209, 0x22, TMC2209_VACTUAL_MASK, TMC2209_VACTUAL_SHIFT,value);
+			  setrev = 1000;
+			  setvalue = setrev*setrev;
+			  for(int i = 0;i<=10000;i+=100){
+				  TMC2209_FIELD_UPDATE(&TMC2209, 0x22, TMC2209_VACTUAL_MASK, TMC2209_VACTUAL_SHIFT,i);
+				  HAL_Delay(100);
+
+			  			  }
+
+//			  for(int i = 0;i<=setrev;i+=10){
+//				  motorrev=(10000*((i*i)/setvalue));
+//				  TMC2209_FIELD_UPDATE(&TMC2209, 0x22, TMC2209_VACTUAL_MASK, TMC2209_VACTUAL_SHIFT,motorrev);
+//				  HAL_Delay(100);
+//			  }
 			  rxbuf[0]=0;
 			  break;
 
 		  case'2':
 			  value = 0;
+			  TMC2209_FIELD_UPDATE(&TMC2209, 0x22, TMC2209_VACTUAL_MASK, TMC2209_VACTUAL_SHIFT,value);
+			  rxbuf[0]=0;
+			  break;
+
+		  case'3':
+			  value = 10000;
 			  TMC2209_FIELD_UPDATE(&TMC2209, 0x22, TMC2209_VACTUAL_MASK, TMC2209_VACTUAL_SHIFT,value);
 			  rxbuf[0]=0;
 			  break;

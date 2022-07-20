@@ -1,0 +1,16 @@
+20:58:01 **** Build of configuration Debug for project STMF446_BLDCMotor_CAN_UART_2Motor2 ****
+make -j7 all 
+arm-none-eabi-gcc -o "STMF446_BLDCMotor_CAN_UART_2Motor2.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_BLDCMotor_CAN_UART_2Motor2/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_BLDCMotor_CAN_UART_2Motor2.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_BLDCMotor_CAN_UART_2Motor2.elf
+ 
+arm-none-eabi-size   STMF446_BLDCMotor_CAN_UART_2Motor2.elf 
+arm-none-eabi-objdump -h -S  STMF446_BLDCMotor_CAN_UART_2Motor2.elf  > "STMF446_BLDCMotor_CAN_UART_2Motor2.list"
+   text	   data	    bss	    dec	    hex	filename
+  36072	    484	   1868	  38424	   9618	STMF446_BLDCMotor_CAN_UART_2Motor2.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_BLDCMotor_CAN_UART_2Motor2.list
+ 
+
+20:58:02 Build Finished. 0 errors, 0 warnings. (took 1s.735ms)
+

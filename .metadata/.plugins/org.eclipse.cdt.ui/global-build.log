@@ -1,7 +1,7 @@
-17:03:57 **** Incremental Build of configuration Debug for project STMF446_BLDCMotor_CAN_UART_test ****
+02:33:31 **** Incremental Build of configuration Debug for project STMF446_BLDCMotor_CAN_UART_2Motor ****
 make -j7 all 
-arm-none-eabi-size   STMF446_BLDCMotor_CAN_UART_test.elf 
+arm-none-eabi-size   STMF446_BLDCMotor_CAN_UART_2Motor.elf 
    text	   data	    bss	    dec	    hex	filename
-  34036	    484	   1812	  36332	   8dec	STMF446_BLDCMotor_CAN_UART_test.elf
+  36720	    488	   1872	  39080	   98a8	STMF446_BLDCMotor_CAN_UART_2Motor.elf
 Finished building: default.size.stdout
  

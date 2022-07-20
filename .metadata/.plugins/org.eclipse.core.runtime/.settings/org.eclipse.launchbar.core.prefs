@@ -1,10 +1,11 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=macosx
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32_F446RE_CANUART,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_SteppingMotor_UARTOnly Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_CAN_UART_RMDSETUP Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32F303_TMC2209_Absolute_Homing_stallguard Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_SteppingMotor Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32F303_TMC2209_UARTOnly Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_test Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32_F446RE_CANUART,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_SteppingMotor_UARTOnly Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32F303_TMC2209_Absolute_Homing_stallguard Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_SteppingMotor Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32F303_TMC2209_UARTOnly Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_2Motor Debug
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32_F446RE_CANUART/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32_F446RE_CANUART/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_SerialInput\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_test\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_CAN_1command\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_CAN_1command\ Debug/activeLaunchTarget=null\:---
