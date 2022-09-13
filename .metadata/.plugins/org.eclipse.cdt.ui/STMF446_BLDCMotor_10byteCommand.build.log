@@ -1,0 +1,10 @@
+06:03:20 **** Incremental Build of configuration Debug for project STMF446_BLDCMotor_10byteCommand ****
+make -j7 all 
+arm-none-eabi-size   STMF446_BLDCMotor_10byteCommand.elf 
+   text	   data	    bss	    dec	    hex	filename
+  47712	    496	   1872	  50080	   c3a0	STMF446_BLDCMotor_10byteCommand.elf
+Finished building: default.size.stdout
+ 
+
+06:03:22 Build Finished. 0 errors, 0 warnings. (took 1s.906ms)
+

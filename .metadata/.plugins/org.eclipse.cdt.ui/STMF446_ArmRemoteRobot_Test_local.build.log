@@ -1,0 +1,10 @@
+06:03:16 **** Incremental Build of configuration Debug for project STMF446_ArmRemoteRobot_Test_local ****
+make -j7 all 
+arm-none-eabi-size   STMF446_ArmRemoteRobot_Test_local.elf 
+   text	   data	    bss	    dec	    hex	filename
+  57456	    496	   3816	  61768	   f148	STMF446_ArmRemoteRobot_Test_local.elf
+Finished building: default.size.stdout
+ 
+
+06:03:18 Build Finished. 0 errors, 0 warnings. (took 1s.667ms)
+

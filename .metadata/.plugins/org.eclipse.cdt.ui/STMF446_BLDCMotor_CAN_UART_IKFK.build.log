@@ -1,0 +1,44 @@
+17:07:22 **** Incremental Build of configuration Debug for project STMF446_BLDCMotor_CAN_UART_IKFK ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:239:11: warning: unused variable 't' [-Wunused-variable]
+  239 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:238:11: warning: unused variable 'v' [-Wunused-variable]
+  238 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:230:14: warning: unused variable 'id' [-Wunused-variable]
+  230 |     uint16_t id = data[0];
+      |              ^~
+../Core/Src/main.c: In function 'BLDC_MotorRotate':
+../Core/Src/main.c:245:8: warning: unused variable 'setMax_kp' [-Wunused-variable]
+  245 |  float setMax_kp=100.0;
+      |        ^~~~~~~~~
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:418:6: warning: unused variable 'Mode_Type' [-Wunused-variable]
+  418 | char Mode_Type[4];
+      |      ^~~~~~~~~
+../Core/Src/main.c:413:9: warning: unused variable 'checkdata' [-Wunused-variable]
+  413 | uint8_t checkdata[10];
+      |         ^~~~~~~~~
+../Core/Src/main.c:412:9: warning: unused variable 'modeflag' [-Wunused-variable]
+  412 | uint8_t modeflag=0;
+      |         ^~~~~~~~
+../Core/Src/main.c:380:12: warning: unused variable 'Init_flag' [-Wunused-variable]
+  380 |   uint32_t Init_flag=0;
+      |            ^~~~~~~~~
+arm-none-eabi-gcc -o "STMF446_BLDCMotor_CAN_UART_IKFK.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_BLDCMotor_CAN_UART_IKFK/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_BLDCMotor_CAN_UART_IKFK.map" -Wl,--gc-sections -static -u_printf_float --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_BLDCMotor_CAN_UART_IKFK.elf
+ 
+arm-none-eabi-size   STMF446_BLDCMotor_CAN_UART_IKFK.elf 
+arm-none-eabi-objdump -h -S  STMF446_BLDCMotor_CAN_UART_IKFK.elf  > "STMF446_BLDCMotor_CAN_UART_IKFK.list"
+   text	   data	    bss	    dec	    hex	filename
+  44168	    496	   1896	  46560	   b5e0	STMF446_BLDCMotor_CAN_UART_IKFK.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_BLDCMotor_CAN_UART_IKFK.list
+ 
+
+17:07:24 Build Finished. 0 errors, 8 warnings. (took 2s.538ms)
+

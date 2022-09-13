@@ -107,6 +107,8 @@ uint8_t nextcan_flag = 0;
 int Writecom=0x00;
 int Readcom=0x00;
 char RMD_cmd;
+char KeyCommand[10];
+
 
 /* USER CODE END PV */
 
@@ -190,17 +192,18 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			end_stop_state &= ~1;
 		}
 	}
-	if(GPIO_Pin == GPIO_PIN_7 ){
-		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)){
-			current_stall|= 0;
-		}
-		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)){
-			current_stall = 1;
-		}
-	}
+//	if(GPIO_Pin == GPIO_PIN_7 ){
+//		if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7)){
+//			current_stall|= 0;
+//		}
+//		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7)){
+//			current_stall = 1;
+//		}
+//	}
 }
 void Step0(){                                       //step pin
 	//pull+
+	printf("step_ON\r\n");
 
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_9, GPIO_PIN_SET);
@@ -362,7 +365,7 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim){      //指定し�
 			s->n--;		//sにnを代入し、nから1を引く
 		}
 		s->di = s->d;	//計算結果sをstepperInfoのメンバdに代入したものをメンバdiに代入
-		//printf("stepPosition:%ld \r\n",s->stepPosition);
+//		printf("stepPosition:%ld \r\n",s->stepPosition);
 		setNextInterruptInterval();
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
 	}
@@ -490,7 +493,9 @@ void TMCsetup(){
 	int32_t value = 0;
 
 
-	IRUN_value = 22;
+
+
+	IRUN_value = 28;
 	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IRUN_MASK, TMC2209_IRUN_SHIFT, IRUN_value);	//実行電流
 	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 	HAL_Delay(100);
@@ -513,7 +518,7 @@ void TMCsetup(){
 	value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_PDN_DISABLE_MASK, TMC2209_PDN_DISABLE_SHIFT);
 	printf("pdn_disable : %ld\r\n", value);
 
-	TCOOLTHRS_value=300;
+	TCOOLTHRS_value=1000;
 	tmc2209_writeInt(&TMC2209, TMC2209_TCOOLTHRS, TCOOLTHRS_value);
 	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 	printf("TCOOLTHRS: %ld\r\n", TCOOLTHRS_value);
@@ -587,7 +592,7 @@ void TMCsetup(){
 	IHOLDDELAY_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLDDELAY_MASK, TMC2209_IHOLDDELAY_SHIFT);
 	printf("IHOLDDELAY: %ld\r\n", IHOLDDELAY_value);
 
-	stallgard_setup_value=10;											//SG_RESULTと比較して、
+	stallgard_setup_value=400;											//SG_RESULTと比較して、
 	tmc2209_writeInt(&TMC2209, TMC2209_SGTHRS, stallgard_setup_value);
 	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 	stallgard_setup_value = tmc2209_readInt(&TMC2209, TMC2209_SGTHRS);
@@ -688,6 +693,9 @@ void RMDCommand(){
 			break;
 		case 0xA1:
 			TxData[0] = 0xA1;	//Torque設定
+			TxData[1] = 0x00;
+			TxData[2] = 0x2C;	//speed low
+			TxData[3] = 0x01;	//speed high
 			TxData[4] = UART1_Data[4];	//currentlow
 			TxData[5] = UART1_Data[5];	//currenthigh
 			break;
@@ -701,6 +709,19 @@ void RMDCommand(){
 			TxData[6] = 0x00;
 			TxData[7] = 0x00;	//poshigh
 			break;
+		case 0x91:
+			TxData[0] = 0x91;
+			TxData[1] = 0x00;
+			TxData[2] = 0x00;	//speed low
+			TxData[3] = 0x00;	//speed high
+			TxData[4] = 0x00;	//poslow
+			TxData[5] = 0x00;
+			TxData[6] = UART1_Data[6];
+			TxData[7] = UART1_Data[7];	//poshigh
+			printf("0x91\r\n");
+
+			break;
+
 		default:
 			printf("No Data Writecom\r\n");
 			end_flag=1;
@@ -728,14 +749,14 @@ void RMDCommand(){
 			break;
 	}
 	Readcom=0x00;
-	if(0 < HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) ){
+	if(3== HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) ){
 		HAL_CAN_AddTxMessage(&hcan1,&TxHeader,TxData,&TxMailbox);
-		HAL_Delay(1);
+		HAL_Delay(10);
 //		printf("Can Send\r\n");
 		while(!nextcan_flag){
 //			printf("Mailboxes: %d\r\n",HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
 			HAL_CAN_AddTxMessage(&hcan1,&TxHeader,TxData,&TxMailbox);
-			HAL_Delay(1);
+			HAL_Delay(10);
 			count++;
 			if(count==10){
 				nextcan_flag=1;
@@ -753,26 +774,61 @@ void RMDCommand(){
 		end_flag=1;
 	}
 }
+void RMDTx(){
+	int count=0;
+	TxHeader.StdId=0x141;
+	TxHeader.IDE = CAN_ID_STD;
+	TxHeader.DLC = 0x08;
+	TxHeader.RTR = CAN_RTR_DATA;
+	TxHeader.TransmitGlobalTime = DISABLE;
+	TxData[1] = 0x00;
+
+	if(0 < HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) ){
+			HAL_CAN_AddTxMessage(&hcan1,&TxHeader,TxData,&TxMailbox);
+			HAL_Delay(10);
+	//		printf("Can Send\r\n");
+			while(!nextcan_flag){
+		//			printf("Mailboxes: %d\r\n",HAL_CAN_GetTxMailboxesFreeLevel(&hcan1));
+					if(0 < HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) ){
+					HAL_CAN_AddTxMessage(&hcan1,&TxHeader,TxData,&TxMailbox);
+					HAL_Delay(10);
+					if(count==10){
+						nextcan_flag=1;
+						HAL_CAN_Stop (&hcan1);
+						HAL_CAN_Start(&hcan1);
+						printf("CAN RESET\r\n");
+						}else{
+						printf("Mailbox_congestion\r\n");
+								nextcan_flag=0;
+								end_flag=1;
+							}
+					}
+				}
+			nextcan_flag=0;
+			count=0;
+	}
+}
 void SetUpRMD(){
-	UART1_Data[4] = 0x50;
-	UART1_Data[5] = 0x46;
+	UART1_Data[4] = 0x00;
+	UART1_Data[5] = 0x00;
 	Writecom = 0xA4;
 	RMDCommand();
 }
 void RMDLeftTurn(){
-	UART1_Data[4] = 0xE0;
-	UART1_Data[5] = 0x2E;
+	UART1_Data[4] = 0x00;
+	UART1_Data[5] = 0x00;
 	Writecom=0xA4;
 	RMDCommand();
 }
 void RMDRightTurn(){
-	UART1_Data[4] = 0xC0;
-	UART1_Data[5] = 0x5D;
+	UART1_Data[4] = 0x50;
+	UART1_Data[5] = 0x46;
 	Writecom=0xA4;
 	RMDCommand();
 }
+
 void checkRMDdata(){
-	int RxBitshift[4];
+	uint16_t RxBitshift[4];
 	RxBitshift[0]=0;
 	RxBitshift[1]=0;
 	RxBitshift[2]=0;
@@ -810,15 +866,46 @@ void checkRMDdata(){
 	printf("Torque current :%d \r\n",RxBitshift[0]);
 	printf("Speed :%d \r\n",RxBitshift[1]);
 	printf("Encoder position:%d \r\n",RxBitshift[2]);
+
+	Readcom=0x90;
+	RMDCommand();
+	printf("0x90\r\n");
+	RxBitshift[0]=RxData[2] & 0xFF;
+	RxBitshift[0]+=(RxData[3] & 0xFF) << 8;
+//	RxBitshift[0]=RxBitshift[0]-1;
+	RxBitshift[0]=RxBitshift[0]<<2;
+	RxBitshift[0]=(RxBitshift[0]>>2);
+	RxBitshift[1]=RxData[4] & 0xFF;
+	RxBitshift[1]+=(RxData[5] & 0xFF) << 8;
+	RxBitshift[2]=RxData[6] & 0xFF;
+	RxBitshift[2]+=(RxData[7] & 0xFF) << 8;
+	printf("Encoder position:%d \r\n",RxBitshift[0]);
+	printf("Encoder original position :%d \r\n",RxBitshift[1]);
+	printf("Encoder offset :%d \r\n",RxBitshift[2]);
+
+}
+void motor_status(){
+	uint16_t tx_data[8];
+	tx_data[0]=RxData[2] & 0xFF;
+	tx_data[0]+=(RxData[3] & 0xFF) << 8;
+	tx_data[1]=RxData[4] & 0xFF;
+	tx_data[1]+=(RxData[5] & 0xFF) << 8;
+	tx_data[2]=RxData[6] & 0xFF;
+	tx_data[2]+=(RxData[7] & 0xFF) << 8;
+	printf("command_byte:%d \r\n",RxData[0]);
+	printf("Motor temperature:%d \r\n",RxData[1]);
+	printf("Torque current :%d \r\n",tx_data[0]);
+	printf("Speed :%d \r\n",tx_data[1]);
+	printf("Encoder position:%d \r\n",tx_data[2]);
 }
 void RMDPIDSetting(){
-	UART1_Data[2] = 0x64;
-	UART1_Data[3] = 0x64;
-	UART1_Data[4] = 0x28;
-	UART1_Data[5] = 0xE;
-	UART1_Data[6] = 0x14;
-	UART1_Data[7] = 0x14;
-	Writecom=0x31;
+	UART1_Data[2] = 0xC8;	//anglePidKp
+	UART1_Data[3] = 0x64;	//anglePidKi
+	UART1_Data[4] = 0x64;	//speedPidKp
+	UART1_Data[5] = 0x32;	//speedPidKi
+	UART1_Data[6] = 0x32;	//iqPidKp
+	UART1_Data[7] = 0x14;	//iqPidKi
+	Writecom=0x32;
 	RMDCommand();
 }
 
@@ -832,6 +919,7 @@ void UART1_InIt(){
 	UART1_Data[6] = 0x00;
 	UART1_Data[7] = 0x00;
 }
+
 
 /* USER CODE END 0 */
 
@@ -868,9 +956,9 @@ int main(void)
   MX_TIM3_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  TMC2209_INIT();
+//  TMC2209_INIT();
   //rxbufを受信したらフラグを
-  HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);
+//  HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);
   printf("Hello\r\n");
   steppers[0].dirFunc = Dir0;
   steppers[0].stepFunc = Step0;
@@ -910,9 +998,16 @@ if(HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_TX_M
 	Error_Handler();
 }
 
-char KeyCommand[1];
+char input_data[5];
+uint8_t sent_RMD_deg[2];
+uint16_t RMD_deg;
+int RMD_offset;
+uint16_t coordinate_receive;
+int sent_step;
 KeyCommand[0]=0;
 printf("RMD Start\r\n");
+HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -921,8 +1016,15 @@ printf("RMD Start\r\n");
   {
 	  //受信割り込みの開始=6byte受け取ったら次の処理へ
 		  get_uart_flag=0;
+		  TxData[0] = 0x00;
+		  TxData[1] = 0x00;
+		  TxData[2] = 0x00;
+		  TxData[3] = 0x00;
+		  TxData[4] = 0x00;
+		  TxData[5] = 0x00;
+		  TxData[6] = 0x00;
+		  TxData[7] = 0x00;
 //		  int i=0;
-		  HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 1);
 	//	  printf("Key %d\r\n",KeyChange);
 		  HAL_UART_Transmit(&huart2, (uint8_t *)KeyCommand, 1,300);
 		  //受信するまで待つ
@@ -935,22 +1037,88 @@ printf("RMD Start\r\n");
 				  switch(KeyCommand[0]){
 				  case '0':
 					  SetUpRMD();
+					  motor_status();
 					  KeyCommand[0]=0;
 					  break;
 				  case'1':
 					  RMDLeftTurn();
+					  motor_status();
 					  KeyCommand[0]=0;
 					  break;
 				  case'2':
 					  RMDRightTurn();
+					  motor_status();
 					  KeyCommand[0]=0;
 					  break;
 				  case'3':
 					  checkRMDdata();
 					  KeyCommand[0]=0;
 					  break;
+				  case'4':
+					  Readcom=0x90;
+					  RMDCommand();
+
+					  KeyCommand[0]=0;
+					  break;
+				  case'5':
+					  UART1_Data[6] =0x00;	//position_offset
+					  UART1_Data[7] =0x00;
+					  Writecom=0x91;
+					  RMDCommand();
+					  KeyCommand[0]=0;
+					  break;
+				  case'6':
+					  RMD_offset=(int)round((90.0/360.0)*65535.0);
+					  printf("RMD_offset :%d \r\n",RMD_offset);
+
+					  UART1_Data[6] = RMD_offset&0xFF;	//position_offset
+					  UART1_Data[7] = RMD_offset>>8;
+					  Writecom=0x91;
+					  RMDCommand();
+					  KeyCommand[0]=0;
+					  break;
+				  case'7':
+
+					  UART1_Data[6] = 0x00;
+					  UART1_Data[7] = 0x80;
+					  Writecom=0x91;
+					  RMDCommand();
+					  KeyCommand[0]=0;
+					  break;
 				  case'9':
 					  RMDPIDSetting();
+					  KeyCommand[0]=0;
+					  break;
+				  case'p':
+					  printf("enter rotate deg");
+					  get_uart_flag=0;
+					  while(!get_uart_flag){}
+					  RMD_deg=(KeyCommand[0]-48)*10000+(KeyCommand[1]-48)*1000+(KeyCommand[2]-48)*100+(KeyCommand[3]-48)*10+(KeyCommand[4]-48);
+					  printf("RMD_deg,%d\r\n",RMD_deg);
+					  for(int i=0;i<5;i++){
+						  printf("KeyCommand,%d\r\n",KeyCommand[i]);
+					  }
+					  TxData[0] = 0xA4;
+					  TxData[2] = 0x2C;	//speed low
+					  TxData[3] = 0x01;	//speed high
+					  TxData[4] =(RMD_deg&0xFF);	//poslow
+					  TxData[5] =(RMD_deg>>8)&0xFF;
+					  RMDTx();
+					  RMD_deg=0;
+					  KeyCommand[0]=0;
+				  case'o':
+					  printf("enter stepping deg");
+					  get_uart_flag=0;
+					  while(!get_uart_flag){}
+					  coordinate_receive=(KeyCommand[0]-48)*100+(KeyCommand[1]-48)*10+(KeyCommand[2]-48);
+					  printf("step_receive,%d\r\n",coordinate_receive);
+					  for(int i=0;i<5;i++){
+						  printf("KeyCommand,%d\r\n",KeyCommand[i]);
+					  }
+					  sent_step=(coordinate_receive/10)*3200;
+					  prepareAbsoluteMovement(sent_step);
+					  runAndWait();
+					  RMD_deg=0;
 					  KeyCommand[0]=0;
 					  break;
 				  case 's':
@@ -1104,9 +1272,9 @@ static void MX_CAN1_Init(void)
   hcan1.Instance = CAN1;
   hcan1.Init.Prescaler = 4;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
-  hcan1.Init.SyncJumpWidth = CAN_SJW_2TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_2TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_7TQ;
+  hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_6TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_3TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
@@ -1326,6 +1494,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	get_uart_flag = 1;
 	printf("uart_timer\n\r");
+	if(KeyCommand[0]=='p'){
+		HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 5);
+	}
+	else if(KeyCommand[0]=='o'){
+		HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 3);
+	}else{
+		HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 1);
+	}
 
 }
 void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)

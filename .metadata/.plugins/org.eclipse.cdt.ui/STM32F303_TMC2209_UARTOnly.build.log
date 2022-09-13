@@ -1,10 +1,24 @@
-05:04:45 **** Incremental Build of configuration Debug for project STM32F303_TMC2209_UARTOnly ****
+06:03:09 **** Incremental Build of configuration Debug for project STM32F303_TMC2209_UARTOnly ****
 make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F303x8 -c -I/Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/STM32F303_TMC_SteppingTest_notLib -I../Core/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc -I../Drivers/STM32F3xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F3xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:447:7: warning: unused variable 'motorrev' [-Wunused-variable]
+  447 |   int motorrev;
+      |       ^~~~~~~~
+../Core/Src/main.c:409:6: warning: variable 'setvalue' set but not used [-Wunused-but-set-variable]
+  409 |  int setvalue=0;
+      |      ^~~~~~~~
+arm-none-eabi-gcc -o "STM32F303_TMC2209_UARTOnly.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_UARTOnly/STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32F303_TMC2209_UARTOnly.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STM32F303_TMC2209_UARTOnly.elf
+ 
 arm-none-eabi-size   STM32F303_TMC2209_UARTOnly.elf 
+arm-none-eabi-objdump -h -S  STM32F303_TMC2209_UARTOnly.elf  > "STM32F303_TMC2209_UARTOnly.list"
    text	   data	    bss	    dec	    hex	filename
-  26280	    120	   3552	  29952	   7500	STM32F303_TMC2209_UARTOnly.elf
+  26296	    120	   3552	  29968	   7510	STM32F303_TMC2209_UARTOnly.elf
 Finished building: default.size.stdout
  
+Finished building: STM32F303_TMC2209_UARTOnly.list
+ 
 
-05:04:46 Build Finished. 0 errors, 0 warnings. (took 634ms)
+06:03:12 Build Finished. 0 errors, 2 warnings. (took 2s.670ms)
 

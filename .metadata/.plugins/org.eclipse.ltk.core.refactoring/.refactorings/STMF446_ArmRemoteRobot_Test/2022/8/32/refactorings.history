@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;STMF446_ArmRemoteRobot_Test/STMF446_BLDCMotor_Test.ioc&apos; to &apos;STMF446_ArmRemoteRobot_Test.ioc&apos;" description="Rename resource &apos;STMF446_BLDCMotor_Test.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="STMF446_BLDCMotor_Test.ioc" name="STMF446_ArmRemoteRobot_Test.ioc" stamp="1659352585885" updateReferences="true"/>
+</session>

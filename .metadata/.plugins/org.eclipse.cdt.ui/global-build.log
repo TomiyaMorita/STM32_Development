@@ -1,7 +1,7 @@
-02:33:31 **** Incremental Build of configuration Debug for project STMF446_BLDCMotor_CAN_UART_2Motor ****
+06:05:46 **** Incremental Build of configuration Debug for project STMF446_ArmRemoteRobot_Test ****
 make -j7 all 
-arm-none-eabi-size   STMF446_BLDCMotor_CAN_UART_2Motor.elf 
+arm-none-eabi-size   STMF446_ArmRemoteRobot_Test.elf 
    text	   data	    bss	    dec	    hex	filename
-  36720	    488	   1872	  39080	   98a8	STMF446_BLDCMotor_CAN_UART_2Motor.elf
+  57632	    496	   3816	  61944	   f1f8	STMF446_ArmRemoteRobot_Test.elf
 Finished building: default.size.stdout
  

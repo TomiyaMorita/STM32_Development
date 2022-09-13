@@ -51,23 +51,25 @@ UART_HandleTypeDef huart2;
 CAN_FilterTypeDef sFilterConfig;
 CAN_TxHeaderTypeDef TxHeader;
 CAN_RxHeaderTypeDef RxHeader;
-uint8_t TxData[8];
-uint8_t RxData[8];
+uint8_t TxData[10];
+uint8_t RxData[10];
 uint8_t data[8];
 uint32_t TxMailbox;
 uint32_t canid;
 uint8_t cmd_data = 0x00;
-uint8_t UART1_Data[8];
 uint8_t home_position_state =0;
 uint8_t get_uart_flag = 0;
 uint8_t get_can_flag = 0; //canを受信したかどうかのflag
 uint8_t nextcan_flag = 0;
+uint8_t selectmode_flag = 0;
 int Writecom=0x00;
 int Readcom=0x00;
 char RMD_cmd;
 float p_getdata=0.0;
 float t_position[2];
 uint16_t p_getintdata=0;
+float l1=300.0;
+float l2=350.0;
 
 /* USER CODE END PV */
 
@@ -109,7 +111,7 @@ static void MX_CAN1_Init(void);
 uint8_t uart_data;
 char tx_data[]="get_data\r\n";
 int flag = 1;
-uint8_t buffersize=1;
+uint8_t buffersize=10;
 typedef struct {
 	uint16_t rxMsg;
 	uint16_t txMsg;
@@ -304,6 +306,23 @@ void BLDC_MotorRotate(){
 		}
 }
 
+void command_judgment(uint8_t *ModeSelect){
+	int modeflag_count=0;
+	for(uint8_t i=0; i<10 ;i++){
+			  ModeSelect[i]= ~(ModeSelect[i]);
+			  if(ModeSelect[i]==0){
+				  modeflag_count++;
+			  }
+		  }
+		  if(modeflag_count<=8){	//動作モード
+			  selectmode_flag=0;
+		  }
+		  else if(modeflag_count==9){	//コマンドモード,9byte ModeSelectが0だったら
+			  selectmode_flag=1;
+		  }
+}
+void BLDC_FK(float s1,float s2,float* xp,float* yp);
+void BLDC_IK(float x,float y,float* s1p,float* s2p);
 /* USER CODE END 0 */
 
 /**
@@ -340,12 +359,12 @@ int main(void)
   /* USER CODE BEGIN 2 */
   uint32_t Init_flag=0;
   if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_5)!=1){	//リミットスイッチON→待機状態
-		  home_position_state=1;
-		  printf("home_position_state\r\n");
-	  }else{
-		  home_position_state=0;
-		  printf("Error!\r\n");
-	  }
+	  home_position_state=1;
+	  printf("home_position_state\r\n");
+  }else{
+	  home_position_state=0;
+	  printf("Error!\r\n");
+  }
 sFilterConfig.FilterBank = 14;
 sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
@@ -371,14 +390,22 @@ if(HAL_CAN_ActivateNotification(&hcan2,CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_TX_M
 {
 	Error_Handler();
 }
-char KeyCommand[10];
-char receive_command[4];
-char ModeSelect[10];
+uint8_t judgment[10];
 uint8_t modeflag=0;
-uint8_t modeflag_count;
-uint32_t Mode_Move_selection=0;
 uint32_t t_int_position[2];
-KeyCommand[0]=0;
+uint8_t mode_select[1];
+char Mode_Type[4];
+uint32_t Mode_selection=0;
+float coordinate_tf[2];
+float fk_data[2];
+float ik_data[2];
+float origin_position[10];
+BLDC_IK(-300.0,0.0,&ik_data[0],&ik_data[1]);
+origin_position[0]=ik_data[0];
+origin_position[1]=ik_data[1];
+fk_data[0]=0.0;
+fk_data[1]=0.0;
+RxData[0]=0;
 printf("BLDC Start\r\n");
 
   /* USER CODE END 2 */
@@ -387,258 +414,44 @@ printf("BLDC Start\r\n");
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  KeyCommand[0]=0;
+//	  RxData[0]=0;
 //	  home_position_state=0;
 	  get_uart_flag=0;
-	  HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, buffersize);
-	  HAL_UART_Transmit(&huart2, (uint8_t *)KeyCommand, buffersize,300);
+	  HAL_UART_Receive_IT(&huart2, (uint8_t *)RxData, buffersize);
+	  //HAL_UART_Transmit(&huart2, (uint8_t *)RxData, buffersize,300);
 	  //受信するまで待つ
 	  while(!get_uart_flag){}
 	  get_can_flag=1;//canデータ受信用のフラグを0に
-	  if(KeyCommand[0]!=0 && home_position_state==1){
-		  switch(KeyCommand[0]){
-		  case'i':
-			  printf("case : i\r\n");
-			  receive_command[0]=0x1A;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  printf("Mode_Move_selection　%x\r\n",Mode_Move_selection);
-
-			  printf("Mode_Move_selection　%x\r\n",Mode_Move_selection);
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  default:
-			  printf("NoCommand:%x\r\n",KeyCommand[0]);
-			  KeyCommand[0]=0;
-			  get_can_flag=1;
-			  break;
+	  for(int i=0;i<10;i++){
+		  judgment[i]=RxData[i];
+	  }
+	  command_judgment(judgment);
+	  if(home_position_state==1&&selectmode_flag==1&&RxData[0]==0x1A){	//初期位置モード
+		  printf("Initialization\r\n");	//初期位置モード
+		  EnterMotorMode();
+		  canid=0x01;
+		  BLDC_CANTx();
+		  canid=0x02;
+		  BLDC_CANTx();
+		  HAL_Delay(10);
+		  t_position[0]=PI/2;
+		  t_position[1]=PI;
+		  BLDC_MotorRotate();
+		  RxData[0]=0;
+	  }
+	  else if(home_position_state==0&&selectmode_flag==1){
+			  mode_select[0]=RxData[0];	//モード変更
 		  }
-		  get_uart_flag=0;
-	  }
-	  if(KeyCommand[0]!=0 && home_position_state==0){
-		  switch(KeyCommand[0]){
-		  //void pack_cmd(float _p_des, float _v_des, float _kp, float _kd, float _t_ff)
-		  case'm':
-			  printf("case : m\r\n");
-			  receive_command[0]=0xA0;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  printf("Mode_Move_selection　%x\r\n",Mode_Move_selection);
-//			  Mode_Move_selection=receive_command[0]<<24|receive_command[1]<<16|receive_command[2]<<8|receive_command[3];
-//			  Mode_Move_selection=Mode_Move_selection>>24&0xFF;
-//			  printf("Mode_Move_selection　%x\r\n",Mode_Move_selection);
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case'b':
-			  printf("case : m\r\n");
-			  receive_command[0]=0xA1;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  printf("Mode_Move_selection　%x\r\n",Mode_Move_selection);
-//			  Mode_Move_selection=receive_command[0]<<24|receive_command[1]<<16|receive_command[2]<<8|receive_command[3];
-//			  Mode_Move_selection=Mode_Move_selection>>24&0xFF;
-//			  printf("Mode_Move_selection　%x\r\n",Mode_Move_selection);
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case'r':
-			  printf("case : m\r\n");
-			  receive_command[0]=0xA2;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case's':
-			  printf("case : m\r\n");
-			  receive_command[0]=0xA3;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case't':
-			  printf("case : t\r\n");
-			  receive_command[0]=0xB0;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  Mode_Move_selection=receive_command[0]<<24|receive_command[1]<<16|receive_command[2]<<8|receive_command[3];
-//			  Mode_Move_selection=Mode_Move_selection>>24&0xFF;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case'l':
-			  printf("case : m\r\n");
-			  receive_command[0]=0xB1;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case'd':
-			  printf("case : m\r\n");
-			  receive_command[0]=0xB2;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case'e':
-			  printf("case : e\r\n");
-			  receive_command[0]=0xB3;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  Mode_Move_selection=receive_command[0]<<24|receive_command[1]<<16|receive_command[2]<<8|receive_command[3];
-//			  Mode_Move_selection=Mode_Move_selection>>24&0xFF;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case'q':
-			  printf("case : q\r\n");
-			  receive_command[0]=0x04;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  Mode_Move_selection=receive_command[0]<<24|receive_command[1]<<16|receive_command[2]<<8|receive_command[3];
-//			  Mode_Move_selection=Mode_Move_selection>>24&0xFF;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  case's':
-			  printf("case : q\r\n");
-			  receive_command[0]=0x05;
-			  receive_command[1]=0x00;
-			  receive_command[2]=0x00;
-			  receive_command[3]=0x00;
-			  receive_command[4]=0x00;
-			  receive_command[5]=0x00;
-			  receive_command[6]=0x00;
-			  receive_command[7]=0x00;
-			  receive_command[8]=0x00;
-			  receive_command[9]=0x00;
-//			  Mode_Move_selection=receive_command[0]<<24|receive_command[1]<<16|receive_command[2]<<8|receive_command[3];
-//			  Mode_Move_selection=Mode_Move_selection>>24&0xFF;
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
-			  break;
-		  default:
-			  printf("NoCommand\r\n");
-			  KeyCommand[0]=0;
-			  get_can_flag=1;
-			  break;
-		  }
-		  get_uart_flag=0;
-	  }
-	  for(uint8_t i=0; i<10 ;i++){
-		  ModeSelect[i]=receive_command[i]&0xFF;
-		  if(ModeSelect[i]==0){
-			  modeflag_count=modeflag_count++;
-		  }
-	  }
-	  if(modeflag_count<=8){
-		  switch(receive_command[0]){
-		  case 0x0A:
-
-		  }
-	  }
-	  else if(modeflag_count==9){
-
-	  }
-	  if(modeflag==1)
-		  switch(receive_command[0]){
-		  case 0x1A:
-			  printf("Initialization\r\n");	//初期位置モード
-			  EnterMotorMode();
-			  canid=0x01;
-			  BLDC_CANTx();
-			  canid=0x02;
-			  BLDC_CANTx();
-			  HAL_Delay(10);
-			  t_position[0]=PI/2;
-			  t_position[1]=PI;
-			  BLDC_MotorRotate();
-			  KeyCommand[0]=0;
-			  break;
+	 if(home_position_state==0){
+		  switch(mode_select[0]){	//動作モード
 		  case 0xA0:
-			  printf("MoveMode\r\n");	//動作モード
-			  t_position[0] = uint_to_float(t_int_position[0], P_MIN, P_MAX, 16);
-			  t_position[1] = uint_to_float(t_int_position[1], P_MIN, P_MAX, 16);
-			  BLDC_MotorRotate();
-			  KeyCommand[0]=0;
+			  if(selectmode_flag==0){
+				  t_position[0] = uint_to_float(RxData[0], P_MIN, P_MAX, 16);
+				  t_position[1] = uint_to_float(RxData[1], P_MIN, P_MAX, 16);
+				  BLDC_MotorRotate();
+			  }
 			  break;
-		  case 0xB0:
-			  printf("Teaching\r\n");	//ティーチングモード
+		  case 0xB0:	//ティーチングモード開始
 			  canid=0x01;
 			  pack_cmd(0.0, 0.0, 0.0, 1.0, 0.0);
 			  BLDC_CANTx();
@@ -646,65 +459,52 @@ printf("BLDC Start\r\n");
 			  pack_cmd(0.0, 0.0, 0.0, 1.0, 0.0);
 			  BLDC_CANTx();
 			  HAL_Delay(10);
-			  HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, buffersize);
-			  HAL_UART_Transmit(&huart2, (uint8_t *)KeyCommand, buffersize,300);
-			  while(!get_uart_flag){}
-			  if(KeyCommand[0]==0x0d){
-				  canid=0x01;
-				  pack_cmd(0.0, 0.0, 0.0, 1.0, 0.0);
-				  BLDC_CANTx();
-				  unpack_reply();
-				  pack_cmd(p_getdata, 0.0, 100.0, 3.0, 0.0);
-				  BLDC_CANTx();
-				  unpack_reply();
-				  t_int_position[0]=p_getintdata;
-				  canid=0x02;
-				  pack_cmd(0.0, 0.0, 0.0, 1.0, 0.0);
-				  BLDC_CANTx();
-				  unpack_reply();
-				  pack_cmd(p_getdata, 0.0, 100.0, 3.0, 0.0);
-				  BLDC_CANTx();
-				  unpack_reply();
-				  t_int_position[1]=p_getintdata;
-				  printf("T_Success!\r\n");
-			  }
-			  else{
-				  printf("No_Success!\r\n");
-			  }
-			  KeyCommand[0]=0;
+			  RxData[0]=0;
 			  break;
-		  case 0x01:	//待機位置に戻す
-			  printf("StandbyReturn\r\n");
-			  t_position[0]=0;
-			  t_position[1]=0;
-			  BLDC_MotorRotate();
-			  KeyCommand[0]=0;
+		  case 0xB1:	//ティーチング決定
+			  canid=0x01;
+			  pack_cmd(0.0, 0.0, 0.0, 4.0, 0.0);
+			  BLDC_CANTx();
+			  unpack_reply();
+			  TxData[0]=p_getintdata;
+			  canid=0x02;
+			  pack_cmd(0.0, 0.0, 0.0, 4.0, 0.0);
+			  BLDC_CANTx();
+			  unpack_reply();
+			  TxData[1]=p_getintdata;
+			  HAL_UART_Transmit(&huart2,TxData,sizeof(TxData),100);
 			  break;
-		  case 0x02:	//モーターオフ
-			  printf("MotorOff\r\n");
+		  case 0x01:	//モーターON
+			  canid=0x01;
+			  EnterMotorMode();
+			  BLDC_CANTx();
+			  canid=0x02;
+			  EnterMotorMode();
+			  BLDC_CANTx();
+			  break;
+		  case 0x02:	//モーターOFF
+			  canid=0x01;
 			  ExitMotorMode();
-			  canid=0x01;
 			  BLDC_CANTx();
 			  canid=0x02;
+			  ExitMotorMode();
 			  BLDC_CANTx();
-			  HAL_Delay(10);
-			  KeyCommand[0]=0;
+			  break;
+		  case 0xF1:	//座標受け取り、
+
 			  break;
 		  default:
-			  printf("NoCommand\r\n");
-			  KeyCommand[0]=0;
 			  get_can_flag=1;
 			  break;
 		  }
 		  get_uart_flag=0;
 		  while(!get_can_flag){}
-
-  }
+	  }
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
+  }
 
   /* USER CODE END 3 */
 }
@@ -917,6 +717,28 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void BLDC_FK(float s1,float s2,float* xp,float* yp){
+	float x=0.0;
+	float y=0.0;
+	x=-(l1*cos(s1)+l2*cos(s1+s2));
+	y=l1*sin(s1)+l2*sin(s1+s2);
+	printf("s1=%f\r\n",s1);
+	printf("s2=%f\r\n",s2);
+	printf("x=%f\r\n",x);
+	printf("y=%f\r\n",y);
+	*xp=x;
+	*yp=y;
+}
+void BLDC_IK(float x,float y,float* s1p,float* s2p){
+	float s1=0.0;
+	float s2=0.0;
+	s1=atan(-y/x)-acos((x*x+y*y+l1*l1-l2*l2)/(2*l1*sqrt(x*x+y*y)));
+	s2=M_PI-(acos(((l1*l1+l2*l2)-(x*x+y*y))/(2*l1*l2)));
+	printf("x=%f\r\n",s1);
+	printf("y=%f\r\n",s2);
+	*s1p=s1;
+	*s2p=s2;
+}
 int _write(int file, char *ptr, int len)	//printfに必要
 {
   HAL_UART_Transmit(&huart2,(uint8_t *)ptr,len,10);
@@ -925,12 +747,9 @@ int _write(int file, char *ptr, int len)	//printfに必要
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef*UartHandle)
 {
-//	HAL_UART_Transmit(&huart2,UART1_Data,6,1000);
-//	printf("UART_START\r\n");
-//if(get_can_flag==0){
+	HAL_UART_Receive_IT(&huart2, (uint8_t *)RxData, buffersize);
 	get_uart_flag=1;
-//	printf("UART_GET\r\n");
-//}
+
 
 }
 void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan)

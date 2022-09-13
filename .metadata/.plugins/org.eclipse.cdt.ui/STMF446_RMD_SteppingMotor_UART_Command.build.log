@@ -1,0 +1,12 @@
+16:10:29 **** Incremental Build of configuration Debug for project STMF446_RMD_SteppingMotor_UART_Command ****
+make -j7 all 
+arm-none-eabi-size   STMF446_RMD_SteppingMotor.elf 
+   text	   data	    bss	    dec	    hex	filename
+  32764	    124	   3788	  36676	   8f44	STMF446_RMD_SteppingMotor.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objcopy -O ihex "STMF446_RMD_SteppingMotor.elf" "STMF446_RMD_SteppingMotor.hex"
+ 
+
+16:10:31 Build Finished. 0 errors, 0 warnings. (took 2s.190ms)
+

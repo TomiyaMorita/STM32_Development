@@ -1,4 +1,4 @@
-02:21:04 **** Incremental Build of configuration Debug for project STM32F303_TMC2209_Absolute_Homing_stallguard ****
+06:03:07 **** Incremental Build of configuration Debug for project STM32F303_TMC2209_Absolute_Homing_stallguard ****
 make -j7 all 
 arm-none-eabi-size   STM32F303_TMC2209_Absolute_Homing_stallguard.elf 
    text	   data	    bss	    dec	    hex	filename
@@ -6,5 +6,5 @@ arm-none-eabi-size   STM32F303_TMC2209_Absolute_Homing_stallguard.elf
 Finished building: default.size.stdout
  
 
-02:21:05 Build Finished. 0 errors, 0 warnings. (took 1s.67ms)
+06:03:09 Build Finished. 0 errors, 0 warnings. (took 1s.451ms)
 

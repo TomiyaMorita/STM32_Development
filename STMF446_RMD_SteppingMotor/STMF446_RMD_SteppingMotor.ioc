@@ -1,12 +1,12 @@
 #MicroXplorer Configuration settings - do not modify
-CAN1.BS1=CAN_BS1_2TQ
-CAN1.BS2=CAN_BS2_7TQ
+CAN1.BS1=CAN_BS1_6TQ
+CAN1.BS2=CAN_BS2_3TQ
 CAN1.CalculateBaudRate=1000000
 CAN1.CalculateTimeBit=1000
 CAN1.CalculateTimeQuantum=100.0
 CAN1.IPParameters=CalculateTimeQuantum,CalculateTimeBit,CalculateBaudRate,BS1,BS2,Prescaler,SJW
 CAN1.Prescaler=4
-CAN1.SJW=CAN_SJW_2TQ
+CAN1.SJW=CAN_SJW_1TQ
 File.Version=6
 GPIO.groupedBy=Group By Peripherals
 KeepUserPlacement=false
@@ -158,7 +158,7 @@ ProjectManager.FreePins=false
 ProjectManager.HalAssertFull=false
 ProjectManager.HeapSize=0x200
 ProjectManager.KeepUserCode=true
-ProjectManager.LastFirmware=true
+ProjectManager.LastFirmware=false
 ProjectManager.LibraryCopy=1
 ProjectManager.MainLocation=Core/Src
 ProjectManager.NoMain=false

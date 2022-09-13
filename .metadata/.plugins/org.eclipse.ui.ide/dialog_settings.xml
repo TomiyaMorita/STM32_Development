@@ -9,9 +9,35 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_SteppingMotor"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_RMD_SteppingMotor"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_RMD_command"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRemoteRobot_Test"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_BLDCMotor_Test"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/COPREC/Software/STM_Software/STMF446_ArmRemoteRobot_Test"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_BLDCMotor_CAN_UART_IKFK"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/COPREC/Software/STM_Software/STMF446_BLDCMotor_CAN_UART_IKFK"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/COPREC/Software/STM_Software/STMF446_BLDCMotor_Test"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/stm32_f446_spi2can"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/stm32_f303k8_can"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/STM32F446RE_CAN"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_BLDCMotor_CAN_UART_test"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_StallGuard_threshold"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_StallGuard_IT"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_currentchop"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_RMD_SteppingMotor_Demo"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_Absolute_Homing_stallguard"/>
+			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STM32F303_TMC2209_StallGuard"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/stm32_f446_usart2can"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_practice/stm32_f303k8_can2odrive_test"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_CAN_1command"/>
 		</list>
+	</section>
+	<section name="SaveAsDialogSettings">
+		<item key="DIALOG_X_ORIGIN" value="463"/>
+		<item key="DIALOG_Y_ORIGIN" value="208"/>
+		<item key="DIALOG_WIDTH" value="586"/>
+		<item key="DIALOG_HEIGHT" value="528"/>
+		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
 	</section>
 </section>

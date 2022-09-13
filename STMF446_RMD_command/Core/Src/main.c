@@ -22,6 +22,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include<stdio.h>
+#include <math.h>
+#include<string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,7 +41,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- CAN_HandleTypeDef hcan1;
+CAN_HandleTypeDef hcan1;
 
 UART_HandleTypeDef huart2;
 
@@ -49,8 +51,16 @@ CAN_TxHeaderTypeDef TxHeader;
 CAN_RxHeaderTypeDef RxHeader;
 uint8_t TxData[8];
 uint8_t RxData[8];
+uint8_t canRxdata[8];
+uint8_t RMDRx_can_data[8];
+uint8_t RMDTx_can_data[8];
 uint32_t TxMailbox;
-uint8_t cmd_data = 0x00;
+uint8_t KeyCommand[1];
+uint8_t uart_data;
+uint8_t get_uart_flag=0;
+uint8_t RMD_data[8];
+uint8_t nextcan_flag;
+
 
 /* USER CODE END PV */
 
@@ -65,29 +75,106 @@ static void MX_CAN1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t uart_data;
-char tx_data[]="get_data\r\n";
-int flag = 1;
-uint8_t get_uart_flag=0;
-uint8_t UART1_Data[2];
-uint8_t cmd_data = 0x00;
 
-void RMDcommand(){
-	switch(cmd_data)
+
+void RMDCommand(uint8_t com){
+	uint16_t canget_data[8];
+	memset(RMDTx_can_data,0,sizeof(RMDTx_can_data));
+	switch(com){
+		case 0x31:
+			RMDTx_can_data[0] = 0x31;	//PI設定
+			break;
+		case 0x32:
+			RMDTx_can_data[0] = 0x32;	//PI設定
+			RMDTx_can_data[2] = 0xC8;	//anglePidKp
+			RMDTx_can_data[3] = 0x64;	//anglePidKi
+			RMDTx_can_data[4] = 0x32;	//speedPidKp
+			RMDTx_can_data[5] = 0x14;	//speedPidKi
+			RMDTx_can_data[6] = 0x32;	//iqPidKp
+			RMDTx_can_data[7] = 0x14;	//iqPidKi
+			break;
+		case 0x34:
+			RMDTx_can_data[0] = 0x34;	//accelePI設定
+			break;
+		case 0x91:
+			RMDTx_can_data[0] = 0x91;
+			RMDTx_can_data[6] = RMD_data[6];
+			RMDTx_can_data[7] = RMD_data[7];
+		case 0xA1:
+			RMDTx_can_data[0] = 0xA1;	//Torque設定
 		case 0xA4:
-			TxData[0] = 0xA4;
-			TxData[1] = 0x0F;
-			TxData[2] = 0x00;
-			TxData[3] = 0x64;
-			TxData[4] = 0x50;
-			TxData[5] = 0x46;
-			TxData[6] = 0x00;
-			TxData[7] = 0x00;
+			RMDTx_can_data[0] = 0xA4;
+			RMDTx_can_data[2] = 0x2C;	//speed low
+			RMDTx_can_data[3] = 0x01;	//speed high
+			RMDTx_can_data[4] =RMD_data[4];
+			RMDTx_can_data[5] =RMD_data[5];
 			break;
-
+		case 0xA7:
+			RMDTx_can_data[0] = 0xA7;
+			RMDTx_can_data[2] = 0x2C;	//speed low
+			RMDTx_can_data[3] = 0x01;	//speed high
+			RMDTx_can_data[4] =RMD_data[4];
+			RMDTx_can_data[5] =RMD_data[5];
+			RMDTx_can_data[6] =	0x00;
+			RMDTx_can_data[7] = 0x00;
+			break;
 		default:
-			printf("NothingCommand");
 			break;
+		}
+	TxHeader.StdId=0x141;
+	TxHeader.ExtId = 0x00;
+	TxHeader.IDE = CAN_ID_STD;
+	TxHeader.DLC = 0x08;
+	TxHeader.RTR = CAN_RTR_DATA;
+	TxHeader.TransmitGlobalTime = DISABLE;
+	nextcan_flag=0;
+	while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)<3){}
+	HAL_CAN_AddTxMessage(&hcan1,&TxHeader,RMDTx_can_data,&TxMailbox);
+	HAL_Delay(10);
+	printf("HAL_CAN_AddTxMessager\r\n");
+	switch(com){
+		case 0x31:
+			canget_data[0] = RMDRx_can_data[0];	//PI設定
+			break;
+		case 0x32:
+			canget_data[0] = RMDRx_can_data[0];	//PI設定
+			canget_data[1] = RMDRx_can_data[1];	//anglePidKp
+			canget_data[2] = RMDRx_can_data[2];	//anglePidKi
+			canget_data[3] = RMDRx_can_data[3];	//speedPidKp
+			canget_data[4] = RMDRx_can_data[4];	//speedPidKi
+			canget_data[5] = RMDRx_can_data[5];	//iqPidKp
+			canget_data[6] = RMDRx_can_data[6];	//iqPidKi
+			break;
+		case 0x34:
+			canget_data[0] = RMDRx_can_data[0];	//accelePI設定
+			break;
+		case 0x91:
+			canget_data[0] = RMDRx_can_data[0];
+			canget_data[1] = RMD_data[6];
+			canget_data[2] = RMD_data[7];
+		case 0xA1:
+			canget_data[0] = RMDRx_can_data[0];	//Torque設定
+		case 0xA4:
+			canget_data[0] = RMDRx_can_data[0];
+			canget_data[1] = RMDRx_can_data[1];
+			canget_data[2] = (RMDRx_can_data[2]) | ((RMDRx_can_data[3])<<8);
+			canget_data[3] = (RMDRx_can_data[4]) | ((RMDRx_can_data[5])<<8);
+			canget_data[4] = (RMDRx_can_data[6]) | ((RMDRx_can_data[7])<<8);
+			printf("temp_value : %d\r\n",canget_data[1]);
+			printf("torque_value : %d\r\n",canget_data[2]);
+			printf("speed_value : %d\r\n",canget_data[3]);
+			printf("encoder_value : %d\r\n",canget_data[4]);
+			break;
+		case 0xA7:
+			canget_data[0] = RMDRx_can_data[0];
+			canget_data[1] =(RMDRx_can_data[6]&0xFF) | ((RMDRx_can_data[7]&0xFF)<<8);
+			printf("encoder_value : %d\r\n",canget_data[1]);
+			break;
+		default:
+			break;
+		}
+
+	com=0;
 }
 /* USER CODE END 0 */
 
@@ -98,42 +185,7 @@ void RMDcommand(){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	sFilterConfig.FilterBank = 0;
-	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
-	sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
-	sFilterConfig.FilterIdHigh = 0x0000;
-	sFilterConfig.FilterIdLow = 0x0000;
-	sFilterConfig.FilterMaskIdHigh = 0x0000;
-	sFilterConfig.FilterMaskIdLow = 0x0000;
-	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
-	sFilterConfig.FilterActivation=ENABLE;
-	sFilterConfig.SlaveStartFilterBank=14;
-	if(HAL_CAN_ConfigFilter(&hcan1,&sFilterConfig) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	if(HAL_CAN_Start(&hcan1)!=HAL_OK)
-	{
-		Error_Handler();
-	}
-
-	if(HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	TxHeader.StdId=0x141;
-	//TxHeader.ExtId=0x01;
-	TxHeader.RTR = CAN_RTR_DATA;
-	TxHeader.IDE = CAN_ID_STD;
-	TxHeader.DLC = 8;
-	TxHeader.TransmitGlobalTime = DISABLE;
-	cmd_data =TxData[0] ;
-
-
-	char rxbuf[1];
-	char start[] = "UART_start";
-
-
+	setbuf(stdout, NULL);
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -157,8 +209,32 @@ int main(void)
   MX_USART2_UART_Init();
   MX_CAN1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_UART_Transmit(&huart2, (uint8_t *)start,sizeof(start),100);
-  rxbuf[0]=0;
+  uint8_t com;
+  sFilterConfig.FilterBank = 0;
+  sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+  sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+  sFilterConfig.FilterIdHigh = 0x0000;
+  sFilterConfig.FilterIdLow = 0x0000;
+  sFilterConfig.FilterMaskIdHigh = 0x0000;
+  sFilterConfig.FilterMaskIdLow = 0x0000;
+  sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
+  sFilterConfig.FilterActivation=ENABLE;
+  sFilterConfig.SlaveStartFilterBank=14;
+  if(HAL_CAN_ConfigFilter(&hcan1,&sFilterConfig) != HAL_OK)
+  {
+	  Error_Handler();
+  }
+  if(HAL_CAN_Start(&hcan1)!=HAL_OK)
+  {
+	  Error_Handler();
+  }
+
+  if(HAL_CAN_ActivateNotification(&hcan1,CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_TX_MAILBOX_EMPTY) != HAL_OK)
+  {
+	  Error_Handler();
+  }
+  HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 1);
+  printf("InIt end\r\n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -166,14 +242,57 @@ int main(void)
   while (1)
   {
 	  get_uart_flag=0;
-	  HAL_UART_Receive_DMA(&huart2, UART1_Data, 1);
 	  //受信するまで待つ
+	  printf("waiting...\r\n");
 	  while(!get_uart_flag){}
-	  TxData[0] = UART1_Data[0];
-	  RMDcommand();
-	  HAL_CAN_AddTxMessage(&hcan1,&TxHeader,TxData,&TxMailbox);
-	  HAL_Delay(100);
-	  //}
+	  if(KeyCommand[0]!=0 ){
+		  switch(KeyCommand[0]){
+		  case '0':
+			  printf("case:0\r\n");
+			  com=0x32;
+			  RMDCommand(com);
+			  KeyCommand[0]=0;
+			  break;
+		  case'1':
+			  printf("case:1\r\n");
+			  com=0xA4;
+			  RMD_data[4] = 0x50;	//poslow
+			  RMD_data[5] = 0x46;
+			  RMDCommand(com);
+			  KeyCommand[0]=0;
+			  break;
+		  case'2':
+			  printf("case:2\r\n");
+			  com=0xA4;
+			  RMD_data[4] = 0x00;	//poslow
+			  RMD_data[5] = 0x00;
+			  RMDCommand(com);
+			  KeyCommand[0]=0;
+			  break;
+		  case'3':
+			  printf("case:3\r\n");
+			  com=0xA7;
+			  RMD_data[4] = 0x50;	//poslow
+			  RMD_data[5] = 0x46;
+			  RMDCommand(com);
+			  KeyCommand[0]=0;
+			  break;
+		  case'4':
+			  printf("case:4\r\n");
+			  com=0xA7;
+			  RMD_data[4] = 0xE8;	//poslow
+			  RMD_data[5] = 0xE9;
+			  RMDCommand(com);
+			  KeyCommand[0]=0;
+			  break;
+		  default:
+			  KeyCommand[0]=0;
+			  printf("No,command\r\n");
+			  break;
+		  }
+	  }
+//	  while(!nextcan_flag){}
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -246,15 +365,15 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 16;
+  hcan1.Init.Prescaler = 4;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan1.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan1.Init.TimeSeg2 = CAN_BS2_1TQ;
+  hcan1.Init.TimeSeg1 = CAN_BS1_7TQ;
+  hcan1.Init.TimeSeg2 = CAN_BS2_2TQ;
   hcan1.Init.TimeTriggeredMode = DISABLE;
   hcan1.Init.AutoBusOff = DISABLE;
   hcan1.Init.AutoWakeUp = DISABLE;
-  hcan1.Init.AutoRetransmission = DISABLE;
+  hcan1.Init.AutoRetransmission = ENABLE;
   hcan1.Init.ReceiveFifoLocked = DISABLE;
   hcan1.Init.TransmitFifoPriority = DISABLE;
   if (HAL_CAN_Init(&hcan1) != HAL_OK)
@@ -352,25 +471,22 @@ int _write(int file, char *ptr, int len)	//printfに必要
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef*UartHandle)
 {
 
-	HAL_UART_Transmit(&huart2,UART1_Data,1,1000);	//1byte受け取ったら次へ
+//	HAL_UART_Transmit(&huart2,UART1_Data,1,1000);	//1byte受け取ったら次へ
 	get_uart_flag=1;
+	HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 1);
+
 }
 void HAL_CAN_TxMailbox0CompleteCallack(CAN_HandleTypeDef *hcan)
 {
-	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,1);
+//	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,1);
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan_)
 {
-  HAL_UART_Transmit(&huart2, tx_data, 10,3000);
-  HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0, &RxHeader,RxData);
-  HAL_UART_Transmit(&huart2,RxData,1,3000);
-  flag *= -1;
-  if(flag >0){
-	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,1);
-  }else{
-	  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,0);
-  }
+	HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0, &RxHeader, canRxdata);
+	if(RxHeader.StdId==0x141){
+		memcpy(RMDRx_can_data, canRxdata, 8);
+	}
 }
 
 /* USER CODE END 4 */
@@ -384,6 +500,7 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  printf("error\r\n");
   while (1)
   {
   }

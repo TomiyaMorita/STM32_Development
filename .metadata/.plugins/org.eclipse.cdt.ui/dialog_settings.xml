@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<item key="org.eclipse.cdt.utils.ui.controls.FileListControl" value="${workspace_loc:/${ProjName}}"/>
 	<section name="completion_proposal_size">
 	</section>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
+	</section>
+	<section name="CResourceRenameRefactoringInputPage">
+		<item key="updateReferences" value="true"/>
+	</section>
+	<section name="PDOMSearchPage">
+		<item key="caseSensitive" value="false"/>
+		<item key="searchFlags" value="227191"/>
+		<list key="previousPatterns">
+			<item value="CAN_RX_FIFO0"/>
+			<item value="CAN_HandleTypeDef"/>
+			<item value="hcan_"/>
+			<item value="autoscale"/>
+			<item value="FIELD_SET"/>
+			<item value="TMC2209_IHOLD_SHIFT"/>
+			<item value="CAN_Tx_Mailboxes"/>
+			<item value="Mailbox"/>
+			<item value="CAN_RTR_DATA"/>
+		</list>
+	</section>
+	<section name="OptionalMessageDialog.hide.">
+		<item key="askReindex.detail" value="0"/>
+	</section>
+	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration.internal">
+		<item key="size.width" value="700"/>
+		<item key="size.height" value="180"/>
 	</section>
 </section>
