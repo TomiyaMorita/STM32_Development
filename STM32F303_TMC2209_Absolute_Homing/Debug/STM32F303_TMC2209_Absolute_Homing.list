@@ -41,11 +41,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  18 .debug_line   00012378  00000000  00000000  00053063  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_str    000a989d  00000000  00000000  000653db  2**0
+ 19 .debug_str    000a984a  00000000  00000000  000653db  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .comment      00000050  00000000  00000000  0010ec78  2**0
+ 20 .comment      00000050  00000000  00000000  0010ec25  2**0
                   CONTENTS, READONLY
- 21 .debug_frame  00004670  00000000  00000000  0010ecc8  2**2
+ 21 .debug_frame  00004670  00000000  00000000  0010ec78  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2216,9 +2216,9 @@ static void MX_GPIO_Init(void)
  8000fe6:	f000 fc27 	bl	8001838 <HAL_GPIO_Init>
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 1, 0);
  8000fea:	2200      	movs	r2, #0
- 8000fec:	2100      	movs	r1, #0
+ 8000fec:	2101      	movs	r1, #1
  8000fee:	2017      	movs	r0, #23
  8000ff0:	f000 fb75 	bl	80016de <HAL_NVIC_SetPriority>
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
@@ -2399,9 +2399,9 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* htim_base)
  80010de:	60fb      	str	r3, [r7, #12]
  80010e0:	68fb      	ldr	r3, [r7, #12]
     /* TIM3 interrupt Init */
-    HAL_NVIC_SetPriority(TIM3_IRQn, 0, 0);
+    HAL_NVIC_SetPriority(TIM3_IRQn, 2, 0);
  80010e2:	2200      	movs	r2, #0
- 80010e4:	2100      	movs	r1, #0
+ 80010e4:	2102      	movs	r1, #2
  80010e6:	201d      	movs	r0, #29
  80010e8:	f000 faf9 	bl	80016de <HAL_NVIC_SetPriority>
     HAL_NVIC_EnableIRQ(TIM3_IRQn);
