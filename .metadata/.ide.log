@@ -30361,3 +30361,20 @@ parser evaluation:
 2022-08-04 06:03:00,850 [INFO] ProjectBuilder:4183 - Time for Generating toolchain IDE Files: 8193mS.
 2022-08-04 06:03:00,865 [INFO] ProjectBuilder:2785 - Time for Copy CMSIS : 1mS.
 2022-08-04 06:03:00,872 [INFO] ProjectBuilder:2785 - Time for Copy CMSIS : 0mS.
+2022-09-18 17:48:18,603 [INFO] Activator:177 - 
+
+
+2022-09-18 17:48:18,604 [INFO] Activator:178 - !SESSION log4j initialized
+2022-09-18 17:48:25,704 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] 
+2022-09-18 17:48:36,575 [ERROR] ConfigurationRetriever:139 - IOException on connection: Read timed out
+2022-09-18 17:48:38,597 [ERROR] ConfigurationRetriever:139 - IOException on connection: connect timed out
+2022-09-18 17:48:41,823 [ERROR] ConfigurationRetriever:139 - IOException on connection: Read timed out
+2022-09-18 17:48:54,808 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+2022-09-18 17:48:54,811 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Defaulting to no-operation (NOP) logger implementation
+2022-09-18 17:48:54,811 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2022-09-18 17:48:55,908 [ERROR] ConfigurationRetriever:139 - IOException on connection: Read timed out
+2022-09-18 17:49:01,010 [ERROR] ConfigurationRetriever:139 - IOException on connection: Read timed out
+2022-09-18 17:49:10,486 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.SocketTimeoutException: connect timed out
+2022-09-18 17:49:14,881 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.SocketTimeoutException: Read timed out
+2022-09-18 17:49:19,507 [ERROR] AdobePublisher:162 - Exception while opening the connection: java.net.SocketTimeoutException: Read timed out
+2022-09-18 17:49:25,704 [ERROR] AdobePublisher:183 - Exception while getting the server answer: java.net.SocketTimeoutException: Read timed out

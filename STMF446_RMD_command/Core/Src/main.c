@@ -78,11 +78,18 @@ static void MX_CAN1_Init(void);
 
 
 void RMDCommand(uint8_t com){
+	TxHeader.StdId=0x141;
+	TxHeader.ExtId = 0x00;
+	TxHeader.IDE = CAN_ID_STD;
+	TxHeader.DLC = 0x08;
+	TxHeader.RTR = CAN_RTR_DATA;
+	TxHeader.TransmitGlobalTime = DISABLE;
+	nextcan_flag=0;
 	uint16_t canget_data[8];
 	memset(RMDTx_can_data,0,sizeof(RMDTx_can_data));
 	switch(com){
-		case 0x31:
-			RMDTx_can_data[0] = 0x31;	//PI設定
+		case 0x30:
+			RMDTx_can_data[0] = 0x30;	//PI設定
 			break;
 		case 0x32:
 			RMDTx_can_data[0] = 0x32;	//PI設定
@@ -121,20 +128,26 @@ void RMDCommand(uint8_t com){
 		default:
 			break;
 		}
-	TxHeader.StdId=0x141;
-	TxHeader.ExtId = 0x00;
-	TxHeader.IDE = CAN_ID_STD;
-	TxHeader.DLC = 0x08;
-	TxHeader.RTR = CAN_RTR_DATA;
-	TxHeader.TransmitGlobalTime = DISABLE;
-	nextcan_flag=0;
 	while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)<3){}
 	HAL_CAN_AddTxMessage(&hcan1,&TxHeader,RMDTx_can_data,&TxMailbox);
 	HAL_Delay(10);
 	printf("HAL_CAN_AddTxMessager\r\n");
 	switch(com){
-		case 0x31:
+		case 0x30:
 			canget_data[0] = RMDRx_can_data[0];	//PI設定
+			canget_data[1] = RMDRx_can_data[2];	//anglePidKp
+			canget_data[2] = RMDRx_can_data[3];	//anglePidKi
+			canget_data[3] = RMDRx_can_data[4];	//speedPidKp
+			canget_data[4] = RMDRx_can_data[5];	//speedPidKi
+			canget_data[5] = RMDRx_can_data[6];	//iqPidKp
+			canget_data[6] = RMDRx_can_data[7];	//iqPidKi
+			printf("command: %d\r\n",canget_data[0]);
+			printf("Position loop Kp: %d\r\n",canget_data[1]);
+			printf("Position loop Ki: %d\r\n",canget_data[2]);
+			printf("Speed loop Kp: %d\r\n",canget_data[3]);
+			printf("Speed loop Ki: %d\r\n",canget_data[4]);
+			printf("Torque loop Kp: %d\r\n",canget_data[5]);
+			printf("Torque loop Ki: %d\r\n",canget_data[6]);
 			break;
 		case 0x32:
 			canget_data[0] = RMDRx_can_data[0];	//PI設定
@@ -250,6 +263,12 @@ int main(void)
 		  case '0':
 			  printf("case:0\r\n");
 			  com=0x32;
+			  RMDCommand(com);
+			  KeyCommand[0]=0;
+			  break;
+		  case '9':
+			  printf("case:9\r\n");
+			  com=0x30;
 			  RMDCommand(com);
 			  KeyCommand[0]=0;
 			  break;
