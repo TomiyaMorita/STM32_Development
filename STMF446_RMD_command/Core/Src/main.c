@@ -24,11 +24,50 @@
 #include<stdio.h>
 #include <math.h>
 #include<string.h>
+#include<stdlib.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef struct rmd_motor{
+	uint32_t can_id; //motor can id
+	int position; //motor angle
+	int target_position; //target motor angle
+	int max_velocity;
+	int offset;
+	int zero;
+	int a1;
+	int a2;
+	int z;
+	int rotate;
+	int encoder_val;
+	float firstpos;
+	float rmdtilt;
+	uint8_t state;
+	uint8_t motion_state;
+	uint8_t offset_state;
+	uint8_t PID_state;
+	uint8_t poweron_state;
+	uint8_t poweroff_state;
+	uint8_t encoder_state;
+	uint8_t txcan_data[8];
+	uint16_t reply;
+	uint16_t current_val;
+	uint16_t comparison;
+	uint16_t target_val;
+	uint8_t end_state;
+	uint8_t temperature;
+	uint8_t temp_error;
+	uint8_t rmd_send;
+}RMD_Motor;
 
+typedef struct robot_arm{
+
+	RMD_Motor rmd_axis;	//RMD
+	//各モータの送信角度を目標角度と最大角度から計算して送信する
+	void (*SendAll)(struct robot_arm*);
+
+}RobotArm;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -42,6 +81,9 @@
 
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan1;
+
+TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart2;
 
@@ -61,6 +103,8 @@ uint8_t get_uart_flag=0;
 uint8_t RMD_data[8];
 uint8_t nextcan_flag;
 
+RobotArm ra;
+
 
 /* USER CODE END PV */
 
@@ -69,125 +113,137 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_CAN1_Init(void);
+static void MX_TIM2_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-
+void SendAll(RobotArm* robot_arm);
+void RMD_CANTx(RMD_Motor* rmd);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-
-void RMDCommand(uint8_t com){
-	TxHeader.StdId=0x141;
-	TxHeader.ExtId = 0x00;
+void RMD_CANTx(RMD_Motor* rmd){	// RMDにcanを送る
+	TxHeader.StdId=rmd->can_id;
 	TxHeader.IDE = CAN_ID_STD;
 	TxHeader.DLC = 0x08;
 	TxHeader.RTR = CAN_RTR_DATA;
 	TxHeader.TransmitGlobalTime = DISABLE;
-	nextcan_flag=0;
-	uint16_t canget_data[8];
-	memset(RMDTx_can_data,0,sizeof(RMDTx_can_data));
-	switch(com){
-		case 0x30:
-			RMDTx_can_data[0] = 0x30;	//PI設定
-			break;
-		case 0x32:
-			RMDTx_can_data[0] = 0x32;	//PI設定
-			RMDTx_can_data[2] = 0xC8;	//anglePidKp
-			RMDTx_can_data[3] = 0x64;	//anglePidKi
-			RMDTx_can_data[4] = 0x32;	//speedPidKp
-			RMDTx_can_data[5] = 0x14;	//speedPidKi
-			RMDTx_can_data[6] = 0x32;	//iqPidKp
-			RMDTx_can_data[7] = 0x14;	//iqPidKi
-			break;
-		case 0x34:
-			RMDTx_can_data[0] = 0x34;	//accelePI設定
-			break;
-		case 0x91:
-			RMDTx_can_data[0] = 0x91;
-			RMDTx_can_data[6] = RMD_data[6];
-			RMDTx_can_data[7] = RMD_data[7];
-		case 0xA1:
-			RMDTx_can_data[0] = 0xA1;	//Torque設定
-		case 0xA4:
-			RMDTx_can_data[0] = 0xA4;
-			RMDTx_can_data[2] = 0x2C;	//speed low
-			RMDTx_can_data[3] = 0x01;	//speed high
-			RMDTx_can_data[4] =RMD_data[4];
-			RMDTx_can_data[5] =RMD_data[5];
-			break;
-		case 0xA7:
-			RMDTx_can_data[0] = 0xA7;
-			RMDTx_can_data[2] = 0x2C;	//speed low
-			RMDTx_can_data[3] = 0x01;	//speed high
-			RMDTx_can_data[4] =RMD_data[4];
-			RMDTx_can_data[5] =RMD_data[5];
-			RMDTx_can_data[6] =	0x00;
-			RMDTx_can_data[7] = 0x00;
-			break;
-		default:
-			break;
-		}
-	while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)<3){}
-	HAL_CAN_AddTxMessage(&hcan1,&TxHeader,RMDTx_can_data,&TxMailbox);
+//	while(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)<3){}
+	if(HAL_CAN_GetTxMailboxesFreeLevel(&hcan1)!=0){
+		HAL_CAN_AddTxMessage(&hcan1,&TxHeader,rmd->txcan_data,&TxMailbox);
+		rmd->rmd_send = 1;
+	}else{
+		HAL_CAN_Stop (&hcan1);
+		HAL_CAN_Start (&hcan1);
+//		HAL_CAN_AddTxMessage(&hcan1,&TxHeader,rmd->txcan_data,&TxMailbox);
+	}
 	HAL_Delay(10);
-	printf("HAL_CAN_AddTxMessager\r\n");
-	switch(com){
-		case 0x30:
-			canget_data[0] = RMDRx_can_data[0];	//PI設定
-			canget_data[1] = RMDRx_can_data[2];	//anglePidKp
-			canget_data[2] = RMDRx_can_data[3];	//anglePidKi
-			canget_data[3] = RMDRx_can_data[4];	//speedPidKp
-			canget_data[4] = RMDRx_can_data[5];	//speedPidKi
-			canget_data[5] = RMDRx_can_data[6];	//iqPidKp
-			canget_data[6] = RMDRx_can_data[7];	//iqPidKi
-			printf("command: %d\r\n",canget_data[0]);
-			printf("Position loop Kp: %d\r\n",canget_data[1]);
-			printf("Position loop Ki: %d\r\n",canget_data[2]);
-			printf("Speed loop Kp: %d\r\n",canget_data[3]);
-			printf("Speed loop Ki: %d\r\n",canget_data[4]);
-			printf("Torque loop Kp: %d\r\n",canget_data[5]);
-			printf("Torque loop Ki: %d\r\n",canget_data[6]);
-			break;
-		case 0x32:
-			canget_data[0] = RMDRx_can_data[0];	//PI設定
-			canget_data[1] = RMDRx_can_data[1];	//anglePidKp
-			canget_data[2] = RMDRx_can_data[2];	//anglePidKi
-			canget_data[3] = RMDRx_can_data[3];	//speedPidKp
-			canget_data[4] = RMDRx_can_data[4];	//speedPidKi
-			canget_data[5] = RMDRx_can_data[5];	//iqPidKp
-			canget_data[6] = RMDRx_can_data[6];	//iqPidKi
-			break;
-		case 0x34:
-			canget_data[0] = RMDRx_can_data[0];	//accelePI設定
-			break;
-		case 0x91:
-			canget_data[0] = RMDRx_can_data[0];
-			canget_data[1] = RMD_data[6];
-			canget_data[2] = RMD_data[7];
-		case 0xA1:
-			canget_data[0] = RMDRx_can_data[0];	//Torque設定
-		case 0xA4:
-			canget_data[0] = RMDRx_can_data[0];
-			canget_data[1] = RMDRx_can_data[1];
-			canget_data[2] = (RMDRx_can_data[2]) | ((RMDRx_can_data[3])<<8);
-			canget_data[3] = (RMDRx_can_data[4]) | ((RMDRx_can_data[5])<<8);
-			canget_data[4] = (RMDRx_can_data[6]) | ((RMDRx_can_data[7])<<8);
-			printf("temp_value : %d\r\n",canget_data[1]);
-			printf("torque_value : %d\r\n",canget_data[2]);
-			printf("speed_value : %d\r\n",canget_data[3]);
-			printf("encoder_value : %d\r\n",canget_data[4]);
-			break;
-		case 0xA7:
-			canget_data[0] = RMDRx_can_data[0];
-			canget_data[1] =(RMDRx_can_data[6]&0xFF) | ((RMDRx_can_data[7]&0xFF)<<8);
-			printf("encoder_value : %d\r\n",canget_data[1]);
-			break;
-		default:
-			break;
-		}
+}
 
-	com=0;
+void RMD_calculatuin(RobotArm* robot_arm, uint8_t whitch_rmd){
+	robot_arm->rmd_axis.state = 1;
+	robot_arm->rmd_axis.end_state = 0;
+	robot_arm->rmd_axis.rmd_send = 0;
+	if(whitch_rmd==0){
+		robot_arm->rmd_axis.can_id = 0x141;
+//		robot_arm->rmd_axis.target_position = robot_arm->rmd_axis.zero+(-90*100) + robot_arm->rmd_axis.target_position;	//垂直から90deg引いた値、水平を0degとしてそこから入力された角度だけRMDを回転させる
+	}else if(whitch_rmd==1){
+		robot_arm->rmd_axis.can_id = 0x142;
+
+	}
+	memset(robot_arm->rmd_axis.txcan_data, 0, sizeof(robot_arm->rmd_axis.txcan_data));
+	if(robot_arm->rmd_axis.motion_state==1){	//RMDを回すステート
+		robot_arm->rmd_axis.txcan_data[0] = 0xA4;
+		robot_arm->rmd_axis.txcan_data[2] = 0xC8;	//speed low
+		robot_arm->rmd_axis.txcan_data[3] = 0x00;
+		robot_arm->rmd_axis.txcan_data[4] =(robot_arm->rmd_axis.target_position&0xFF);	//poslow
+		robot_arm->rmd_axis.txcan_data[5] =(robot_arm->rmd_axis.target_position>>8)&0xFF;
+		robot_arm->rmd_axis.motion_state=0;
+	}else if(robot_arm->rmd_axis.PID_state==1){
+		robot_arm->rmd_axis.txcan_data[0] = 0x32;	//PI設定
+		robot_arm->rmd_axis.txcan_data[2] = 0x64;	//anglePidKp 64
+		robot_arm->rmd_axis.txcan_data[3] = 0xC8;	//anglePidKi C8
+		robot_arm->rmd_axis.txcan_data[4] = 0x64;	//speedPidKp 64
+		robot_arm->rmd_axis.txcan_data[5] = 0x14;	//speedPidKi 14
+		robot_arm->rmd_axis.txcan_data[6] = 0x50;	//iqPidKp 50
+		robot_arm->rmd_axis.txcan_data[7] = 0x1E;	//iqPidKi 1E
+		robot_arm->rmd_axis.PID_state=0;
+	}else if(robot_arm->rmd_axis.offset_state==1){
+		robot_arm->rmd_axis.txcan_data[0] = 0x91;
+		robot_arm->rmd_axis.txcan_data[6] = robot_arm->rmd_axis.offset&0xFF;	//position_offset
+		robot_arm->rmd_axis.txcan_data[7] = robot_arm->rmd_axis.offset>>8;
+		robot_arm->rmd_axis.offset_state=0;
+	}else if(robot_arm->rmd_axis.poweron_state==1){
+		robot_arm->rmd_axis.txcan_data[0] = 0x88;
+		robot_arm->rmd_axis.poweron_state=0;
+	}else if(robot_arm->rmd_axis.poweroff_state==1){
+		robot_arm->rmd_axis.txcan_data[0] = 0x80;
+		robot_arm->rmd_axis.poweroff_state = 0;
+	}else if(robot_arm->rmd_axis.encoder_state==1){
+		robot_arm->rmd_axis.txcan_data[0] = 0x90;
+		robot_arm->rmd_axis.encoder_state = 0;
+	}
+}
+void SendAll(RobotArm* robot_arm)
+{
+	if(robot_arm->rmd_axis.state==1){	//RMDの動作
+		RMD_CANTx(&robot_arm->rmd_axis);
+
+	}
+}
+int count = 0;
+void RMD_check(RobotArm* robot_arm){
+	if(robot_arm->rmd_axis.rmd_send==1){
+		if(robot_arm->rmd_axis.txcan_data[0]==0xA4){
+			count++;
+			printf("Count : %d\r\n",count);
+			robot_arm->rmd_axis.reply=((RMDRx_can_data[6] & 0xFF)|((RMDRx_can_data[7] & 0xFF) << 8));
+			robot_arm->rmd_axis.temperature = RMDRx_can_data[1] & 0xFF;
+			if(robot_arm->rmd_axis.can_id == 0x141){
+				robot_arm->rmd_axis.z = robot_arm->rmd_axis.target_position;
+				robot_arm->rmd_axis.rotate = robot_arm->rmd_axis.z/36000;
+				robot_arm->rmd_axis.encoder_val = (int)round((robot_arm->rmd_axis.z - 36000 * robot_arm->rmd_axis.rotate) * 65535.0/36000.0);	//角度をエンコーダー値に変換
+			}
+//			else if(robot_arm->rmd_axis.can_id == 0x142){
+//				robot_arm->rmd_axis.rotate = robot_arm->rmd_axis.z/36000;
+//				robot_arm->rmd_axis.encoder_val = (int)round((robot_arm->rmd_axis.z - 36000 * robot_arm->rmd_axis.rotate) * 65535.0/36000.0);
+//			}
+			printf("current_val : %d\r\n",robot_arm->rmd_axis.current_val);
+			printf("encoder_val : %d\r\n",robot_arm->rmd_axis.encoder_val);
+			printf("reply : %d\r\n",robot_arm->rmd_axis.reply);
+
+			if(abs(robot_arm->rmd_axis.current_val-robot_arm->rmd_axis.encoder_val>100)){
+				printf("Sending...\r\n");
+				if(abs(robot_arm->rmd_axis.current_val-robot_arm->rmd_axis.reply)>100){
+					robot_arm->rmd_axis.state = 0;
+					printf("SendComplete!\r\n");
+				}else if(count > 100){
+					printf("Error! : %d\r\n",count);
+					robot_arm->rmd_axis.state = 0;
+				}
+			}else{
+				printf("Same Position!\r\n");
+				robot_arm->rmd_axis.state=0;
+			}
+			if(robot_arm->rmd_axis.state==0){
+				count = 0;
+			}
+		}else{
+			robot_arm->rmd_axis.state=0;
+			count = 0;
+		}
+		robot_arm->rmd_axis.rmd_send = 0;
+	}
+}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	RobotArm *robot_arm= &ra;
+    if (htim == &htim2){
+    	SendAll(robot_arm);
+    }
+    else if (htim == &htim3){
+    	RMD_check(robot_arm);
+    }
 }
 /* USER CODE END 0 */
 
@@ -221,8 +277,9 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_CAN1_Init();
+  MX_TIM2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  uint8_t com;
   sFilterConfig.FilterBank = 0;
   sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
   sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
@@ -246,8 +303,12 @@ int main(void)
   {
 	  Error_Handler();
   }
+  HAL_TIM_Base_Start_IT(&htim2);
+  HAL_TIM_Base_Start_IT(&htim3);
   HAL_UART_Receive_IT(&huart2, (uint8_t *)KeyCommand, 1);
   printf("InIt end\r\n");
+  RobotArm *robot_arm = &ra;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -258,57 +319,40 @@ int main(void)
 	  //受信するまで待つ
 	  printf("waiting...\r\n");
 	  while(!get_uart_flag){}
+	  printf("waitiUARTflag\r\n");
 	  if(KeyCommand[0]!=0 ){
 		  switch(KeyCommand[0]){
-		  case '0':
-			  printf("case:0\r\n");
-			  com=0x32;
-			  RMDCommand(com);
-			  KeyCommand[0]=0;
+		  case'a':
+			  printf("case:a\r\n");
+			  robot_arm->rmd_axis.encoder_state=1;
+			  RMD_calculatuin(robot_arm,0);
+			  HAL_Delay(50);
+			  robot_arm->rmd_axis.motion_state=1;
+			  robot_arm->rmd_axis.target_position = 40000;
+			  RMD_calculatuin(robot_arm,0);
 			  break;
-		  case '9':
-			  printf("case:9\r\n");
-			  com=0x30;
-			  RMDCommand(com);
-			  KeyCommand[0]=0;
+
+		  case'd':
+			  printf("case:d\r\n");
+			  robot_arm->rmd_axis.encoder_state=1;
+			  RMD_calculatuin(robot_arm,0);
+			  HAL_Delay(50);
+			  robot_arm->rmd_axis.motion_state=1;
+			  robot_arm->rmd_axis.target_position = 0;
+			  RMD_calculatuin(robot_arm,0);
 			  break;
-		  case'1':
-			  printf("case:1\r\n");
-			  com=0xA4;
-			  RMD_data[4] = 0x50;	//poslow
-			  RMD_data[5] = 0x46;
-			  RMDCommand(com);
-			  KeyCommand[0]=0;
+		  case's':
+			  printf("case:s\r\n");
+			  robot_arm->rmd_axis.encoder_state=1;
+			  RMD_calculatuin(robot_arm,0);
 			  break;
-		  case'2':
-			  printf("case:2\r\n");
-			  com=0xA4;
-			  RMD_data[4] = 0x00;	//poslow
-			  RMD_data[5] = 0x00;
-			  RMDCommand(com);
-			  KeyCommand[0]=0;
-			  break;
-		  case'3':
-			  printf("case:3\r\n");
-			  com=0xA7;
-			  RMD_data[4] = 0x50;	//poslow
-			  RMD_data[5] = 0x46;
-			  RMDCommand(com);
-			  KeyCommand[0]=0;
-			  break;
-		  case'4':
-			  printf("case:4\r\n");
-			  com=0xA7;
-			  RMD_data[4] = 0xE8;	//poslow
-			  RMD_data[5] = 0xE9;
-			  RMDCommand(com);
-			  KeyCommand[0]=0;
-			  break;
+
 		  default:
 			  KeyCommand[0]=0;
 			  printf("No,command\r\n");
 			  break;
 		  }
+		  KeyCommand[0]=0;
 	  }
 //	  while(!nextcan_flag){}
 
@@ -402,6 +446,96 @@ static void MX_CAN1_Init(void)
   /* USER CODE BEGIN CAN1_Init 2 */
 
   /* USER CODE END CAN1_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 8000-1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 400-1;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 8000-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 200-1;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
 
 }
 
@@ -503,8 +637,16 @@ void HAL_CAN_TxMailbox0CompleteCallack(CAN_HandleTypeDef *hcan)
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan_)
 {
 	HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0, &RxHeader, canRxdata);
+	 RobotArm *robot_arm = &ra;
 	if(RxHeader.StdId==0x141){
 		memcpy(RMDRx_can_data, canRxdata, 8);
+		if(RMDRx_can_data[0]==0xA4){
+			printf("Count : %d\r\n",count);
+			robot_arm->rmd_axis.reply=((RMDRx_can_data[6] & 0xFF)|((RMDRx_can_data[7] & 0xFF) << 8));	//エンコーダデータ更新
+			robot_arm->rmd_axis.temperature = RMDRx_can_data[1] & 0xFF;
+		}else if(RMDRx_can_data[0]==0x90){
+			robot_arm->rmd_axis.current_val = (RMDRx_can_data[2]) | ((RMDRx_can_data[3])<<8);
+		}
 	}
 }
 

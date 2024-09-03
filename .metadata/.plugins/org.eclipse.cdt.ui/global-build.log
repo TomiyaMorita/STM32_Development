@@ -1,7 +1,223 @@
-06:05:46 **** Incremental Build of configuration Debug for project STMF446_ArmRemoteRobot_Test ****
+11:54:16 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
 make -j7 all 
-arm-none-eabi-size   STMF446_ArmRemoteRobot_Test.elf 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:649:11: warning: unused variable 't' [-Wunused-variable]
+  649 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:648:11: warning: unused variable 'v' [-Wunused-variable]
+  648 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:642:14: warning: unused variable 'id' [-Wunused-variable]
+  642 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
    text	   data	    bss	    dec	    hex	filename
-  57632	    496	   3816	  61944	   f1f8	STMF446_ArmRemoteRobot_Test.elf
+  61480	    496	   4160	  66136	  10258	STMF446_ArmRobot.elf
 Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+11:54:23 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+   text	   data	    bss	    dec	    hex	filename
+  61480	    496	   4160	  66136	  10258	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+11:55:14 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:649:11: warning: unused variable 't' [-Wunused-variable]
+  649 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:648:11: warning: unused variable 'v' [-Wunused-variable]
+  648 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:642:14: warning: unused variable 'id' [-Wunused-variable]
+  642 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61480	    496	   4160	  66136	  10258	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:02:33 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:649:11: warning: unused variable 't' [-Wunused-variable]
+  649 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:648:11: warning: unused variable 'v' [-Wunused-variable]
+  648 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:642:14: warning: unused variable 'id' [-Wunused-variable]
+  642 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61672	    496	   4160	  66328	  10318	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:13:48 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:653:11: warning: unused variable 't' [-Wunused-variable]
+  653 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:652:11: warning: unused variable 'v' [-Wunused-variable]
+  652 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:646:14: warning: unused variable 'id' [-Wunused-variable]
+  646 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61760	    496	   4160	  66416	  10370	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:14:51 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:653:11: warning: unused variable 't' [-Wunused-variable]
+  653 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:652:11: warning: unused variable 'v' [-Wunused-variable]
+  652 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:646:14: warning: unused variable 'id' [-Wunused-variable]
+  646 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61760	    496	   4160	  66416	  10370	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:17:04 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:653:11: warning: unused variable 't' [-Wunused-variable]
+  653 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:652:11: warning: unused variable 'v' [-Wunused-variable]
+  652 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:646:14: warning: unused variable 'id' [-Wunused-variable]
+  646 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61728	    496	   4160	  66384	  10350	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:22:22 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:653:11: warning: unused variable 't' [-Wunused-variable]
+  653 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:652:11: warning: unused variable 'v' [-Wunused-variable]
+  652 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:646:14: warning: unused variable 'id' [-Wunused-variable]
+  646 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61760	    496	   4160	  66416	  10370	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:28:13 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:653:11: warning: unused variable 't' [-Wunused-variable]
+  653 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:652:11: warning: unused variable 'v' [-Wunused-variable]
+  652 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:646:14: warning: unused variable 'id' [-Wunused-variable]
+  646 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  61896	    496	   4160	  66552	  103f8	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
+ 
+12:28:59 **** Incremental Build of configuration Debug for project STMF446_ArmRobot ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F446xx -c -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/tmc" -I"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot" -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'unpack_reply':
+../Core/Src/main.c:653:11: warning: unused variable 't' [-Wunused-variable]
+  653 |     float t = uint_to_float(i_int, -T_MAX, T_MAX, 12);
+      |           ^
+../Core/Src/main.c:652:11: warning: unused variable 'v' [-Wunused-variable]
+  652 |     float v = uint_to_float(v_int, V_MIN, V_MAX, 12);
+      |           ^
+../Core/Src/main.c:646:14: warning: unused variable 'id' [-Wunused-variable]
+  646 |     uint16_t id = BLDC_canRxdata[0];
+      |              ^~
+arm-none-eabi-gcc -o "STMF446_ArmRobot.elf" @"objects.list"   -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot/STM32F446RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STMF446_ArmRobot.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: STMF446_ArmRobot.elf
+ 
+arm-none-eabi-size   STMF446_ArmRobot.elf 
+arm-none-eabi-objdump -h -S  STMF446_ArmRobot.elf  > "STMF446_ArmRobot.list"
+   text	   data	    bss	    dec	    hex	filename
+  62024	    496	   4160	  66680	  10478	STMF446_ArmRobot.elf
+Finished building: default.size.stdout
+ 
+Finished building: STMF446_ArmRobot.list
  

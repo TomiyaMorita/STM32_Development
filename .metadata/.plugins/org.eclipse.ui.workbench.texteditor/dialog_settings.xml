@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="nextcan_flag"/>
+		<item key="selection" value="memset"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="memset"/>
+			<item value="robot_arm-&gt;rmd_axis.state="/>
 			<item value="nextcan_flag"/>
 			<item value="TMC2209_PDN_DISABLE_MASK"/>
 			<item value="TMC2209_SEMIN_MASK"/>
@@ -21,8 +23,6 @@
 			<item value="buffersize"/>
 			<item value="judgment"/>
 			<item value="RxData"/>
-			<item value="HAL_UART_Receive_IT"/>
-			<item value="print"/>
 		</list>
 		<list key="replacehistory">
 			<item value="hcan1"/>
@@ -43,8 +43,8 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1067"/>
-		<item key="DIALOG_Y_ORIGIN" value="371"/>
+		<item key="DIALOG_X_ORIGIN" value="1060"/>
+		<item key="DIALOG_Y_ORIGIN" value="107"/>
 		<item key="DIALOG_WIDTH" value="336"/>
 		<item key="DIALOG_HEIGHT" value="316"/>
 		<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>

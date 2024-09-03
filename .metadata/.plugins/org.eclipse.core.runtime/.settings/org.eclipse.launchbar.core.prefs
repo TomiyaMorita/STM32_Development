@@ -1,13 +1,15 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=macosx
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_2Motor Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_SteppingMotor Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32F303_TMC2209_Absolute_Homing_stallguard Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32F303_TMC2209_UARTOnly Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Receive_UART_test Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_10byteCommand Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_ArmRemoteRobot_Test_local Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command_Simple Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command_Timer Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_ArmRobot Debug
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Receive_UART_test\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Receive_UART_test\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32_F446RE_CANUART/activeLaunchMode=debug
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STM32_F446RE_CANUART/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_ArmRemoteRobot_Test\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_ArmRobot\ Debug/activeLaunchMode=debug
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_ArmRobot\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_IKFK\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_SerialInput\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_BLDCMotor_CAN_UART_test\ Debug/activeLaunchMode=run
@@ -17,4 +19,7 @@ org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_CAN_UART\ Debug/activeL
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_CAN_UART_RMDCommand\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_CAN_UART_RMDSETUP\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_SteppingMotor\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command\ Debug/activeLaunchMode=run
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command\ Debug/activeLaunchTarget=null\:---
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:STMF446_RMD_command_Timer\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:stm32_f446_usart2can.elf/activeLaunchMode=run

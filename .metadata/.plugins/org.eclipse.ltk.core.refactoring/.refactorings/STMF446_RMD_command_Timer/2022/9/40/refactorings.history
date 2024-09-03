@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;STMF446_RMD_command_Timer/STMF446_RMD_command.ioc&apos; to &apos;STMF446_RMD_command_Timer.ioc&apos;" description="Rename resource &apos;STMF446_RMD_command.ioc&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="STMF446_RMD_command.ioc" name="STMF446_RMD_command_Timer.ioc" stamp="1664361162368" updateReferences="true"/>
+</session>

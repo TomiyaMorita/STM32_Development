@@ -9,6 +9,7 @@
 		<item key="SmartImportRootWizardPage.STORE_NESTED_PROJECTS" value="true"/>
 		<item key="SmartImportRootWizardPage.STORE_CONFIGURE_NATURES" value="true"/>
 		<list key="org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage.knownSources">
+			<item value="/Users/moritatomiya/Documents/GitHub/COPREC_RemoteControl_Software/STM/STMF446_ArmRobot"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_SteppingMotor"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_RMD_SteppingMotor"/>
 			<item value="/Users/moritatomiya/Documents/GitHub/STM32_Development/STMF446_RMD_command"/>

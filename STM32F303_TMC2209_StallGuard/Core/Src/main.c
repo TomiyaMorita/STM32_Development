@@ -402,7 +402,7 @@ void TMCsetup(){
 	IHOLDDELAY_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLDDELAY_MASK, TMC2209_IHOLDDELAY_SHIFT);
 	printf("IHOLDDELAY: %ld\r\n", IHOLDDELAY_value);
 
-	stallgard_setup_value=30;											//SG_RESULTと比較して、
+	stallgard_setup_value=300;											//SG_RESULTと比較して、
 	tmc2209_writeInt(&TMC2209, TMC2209_SGTHRS, stallgard_setup_value);
 	stallgard_setup_value = tmc2209_readInt(&TMC2209, TMC2209_SGTHRS);
 	printf("SGTHRS: %ld\r\n", stallgard_setup_value);

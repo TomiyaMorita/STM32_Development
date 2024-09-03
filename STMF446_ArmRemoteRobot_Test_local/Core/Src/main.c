@@ -1388,7 +1388,7 @@ int main(void)
 //  }else{
 //	  home_position_state=0;
 //  }
- TMC2209_INIT();
+// TMC2209_INIT();
  //rxbufを受信したらフラグを
  HAL_TIM_OC_Start_IT(&htim3, TIM_CHANNEL_1);
  steppers[0].dirFunc = Dir0;

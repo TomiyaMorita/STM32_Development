@@ -60,8 +60,8 @@ all: main-build
 main-build: F303K8_RMD_Command.elf secondary-outputs
 
 # Tool invocations
-F303K8_RMD_Command.elf F303K8_RMD_Command.map: $(OBJS) $(USER_OBJS) /Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/F303K8_RMD_Command/STM32F303K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "F303K8_RMD_Command.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/moritatomiya/STM32CubeIDE/workspace_1.9.0/F303K8_RMD_Command/STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F303K8_RMD_Command.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+F303K8_RMD_Command.elf F303K8_RMD_Command.map: $(OBJS) $(USER_OBJS) /Users/moritatomiya/Documents/GitHub/STM32_Development/F303K8_RMD_Command/STM32F303K8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "F303K8_RMD_Command.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/Users/moritatomiya/Documents/GitHub/STM32_Development/F303K8_RMD_Command/STM32F303K8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F303K8_RMD_Command.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

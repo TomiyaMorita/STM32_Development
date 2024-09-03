@@ -72,7 +72,7 @@ typedef struct {
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
- TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -158,22 +158,27 @@ static inline TMC2209TypeDef *motorToIC(uint8_t motor)
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	//stepper 0 end stop senssor
-	if(GPIO_Pin == GPIO_PIN_6 ){
 		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)){
-			end_stop_state |= 1;
-		}
-		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)){
-			end_stop_state &= ~1;
-		}
-	}
-	if(GPIO_Pin == GPIO_PIN_7 ){
-		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)){
-			current_stall|= 0;
-		}
-		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_7)){
-			current_stall = 1;
-		}
-	}
+			end_stop_state = 0;
+				}else{
+					end_stop_state = 1;
+				}
+//	if(GPIO_Pin == GPIO_PIN_6 ){
+//		if(!HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)){
+//			end_stop_state |= 1;
+//		}
+//		if(HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_6)){
+//			end_stop_state &= ~1;
+//		}
+//	}
+//	if(GPIO_Pin == GPIO_PIN_7 ){
+//		if(!HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7)){
+//			current_stall|= 0;
+//		}
+//		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_7)){
+//			current_stall = 1;
+//		}
+//	}
 }
 void Step0(){                                       //step pin
 	//pull+
@@ -342,10 +347,12 @@ void stallguard_back(){
 
 void runAndWait(){
 	setNextInterruptInterval();
-	while(remainingSteppersFlag && !(current_stall));
-	if(current_stall==1){
-		stallguard_back();
-	}
+//	while(remainingSteppersFlag && !(current_stall));
+	while(remainingSteppersFlag);
+
+//	if(current_stall==1){
+//		stallguard_back();
+//	}
 	HAL_Delay(100);
 
 	//printf("posi%d\r\n",re->totalSteps);
@@ -396,140 +403,85 @@ void stepperHoming(){
 	printf("homing:\r\n");
 
 }
+void TMCsetup(){	//TMCレジスタ設定
+	int32_t value = 0;
+//
+//	value=0;
+//	value = TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_PDN_DISABLE_MASK,TMC2209_PDN_DISABLE_SHIFT);
+	value = 1;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_PDN_DISABLE_MASK, TMC2209_PDN_DISABLE_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-void TMCsetup(){
-	int32_t mstep_value = 0;
-		int32_t toff_value = 0;
-		int32_t microstep_value = 0;
-		int32_t IRUN_value = 0;
-		int32_t IHOLD_value = 0;
-		int32_t IHOLDDELAY_value= 0;
-		int32_t stallgard_setup_value=0;
-		int32_t TCOOLTHRS_value=0;
-		int32_t SEMIN_value=0;
-		int32_t SEMAX_value=0;
-		int32_t TBL_value = 0;
-		int32_t stealthChop_value = 0;
-		int32_t autoscale_value = 0;
-		int32_t PWMAuto_value = 0;
-		int32_t PWMAuto_scale = 0;
-		int32_t value = 0;
+	value = 25;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IRUN_MASK, TMC2209_IRUN_SHIFT, value);	//実行電流
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
+	value= 25;																						//モーター待機時の電流の設定
+	TMC2209_FIELD_UPDATE(&TMC2209,TMC2209_IHOLD_IRUN, TMC2209_IHOLD_MASK, TMC2209_IHOLD_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		IRUN_value = 31;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IRUN_MASK, TMC2209_IRUN_SHIFT, IRUN_value);	//実行電流
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		HAL_Delay(100);
-		IRUN_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IRUN_MASK, TMC2209_IRUN_SHIFT);
-		printf("IRUN: %ld\r\n", IRUN_value);
+	value=100;											//SG_RESULTと比較して、
+	tmc2209_writeInt(&TMC2209, TMC2209_SGTHRS, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		IHOLD_value= 31;																						//モーター待機時の電流の設定
-		TMC2209_FIELD_UPDATE(&TMC2209,TMC2209_IHOLD_IRUN, TMC2209_IHOLD_MASK, TMC2209_IHOLD_SHIFT, IHOLD_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		HAL_Delay(100);
-		IHOLD_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLD_MASK, TMC2209_IHOLD_SHIFT);	//保持電流
-		printf("IHOLD: %ld\r\n", IHOLD_value);
+	value=400;
+	tmc2209_writeInt(&TMC2209, TMC2209_TCOOLTHRS, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		value=0;
-		value = TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_PDN_DISABLE_MASK,TMC2209_PDN_DISABLE_SHIFT);
-		printf("pdn_disable : %ld\r\n", value);
-		value = 1;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_PDN_DISABLE_MASK, TMC2209_PDN_DISABLE_SHIFT, value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_PDN_DISABLE_MASK, TMC2209_PDN_DISABLE_SHIFT);
-		printf("pdn_disable : %ld\r\n", value);
+	value = 0;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_EN_SPREADCYCLE_MASK, TMC2209_EN_SPREADCYCLE_SHIFT ,value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		value=0;
-		value = TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_EN_SPREADCYCLE_MASK,TMC2209_EN_SPREADCYCLE_SHIFT);
-		printf("SPREADCYCLE : %ld\r\n", value);
-		value = 1;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_EN_SPREADCYCLE_MASK, TMC2209_EN_SPREADCYCLE_SHIFT ,value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_EN_SPREADCYCLE_MASK,TMC2209_EN_SPREADCYCLE_SHIFT);
-		printf("SPREADCYCLE : %ld\r\n", value);
+	value=100;
+	tmc2209_writeInt(&TMC2209, TMC2209_TPWMTHRS, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		value=0;
-		value = TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_INTERNAL_RSENSE_MASK,TMC2209_INTERNAL_RSENSE_SHIFT);
-		printf("RSENSE : %ld\r\n", value);
-		value = 1;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_INTERNAL_RSENSE_MASK, TMC2209_INTERNAL_RSENSE_SHIFT, value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_INTERNAL_RSENSE_MASK, TMC2209_INTERNAL_RSENSE_SHIFT);
-		printf("RSENSE : %ld\r\n", value);
+	value=0;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_INTERNAL_RSENSE_MASK, TMC2209_INTERNAL_RSENSE_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		mstep_value = TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_MSTEP_REG_SELECT_MASK,TMC2209_MSTEP_REG_SELECT_SHIFT);	//uartでのmicrostepの有効化
-		printf("mstep_before : %ld\r\n", mstep_value);
-		mstep_value = 1;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_MSTEP_REG_SELECT_MASK, TMC2209_MSTEP_REG_SELECT_SHIFT,mstep_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		mstep_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_GCONF, TMC2209_MSTEP_REG_SELECT_MASK, TMC2209_MSTEP_REG_SELECT_SHIFT);
-		printf("mstep_after : %ld\r\n", mstep_value);
+	value=1;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_PWMCONF, TMC2209_PWM_FREQ_MASK, TMC2209_PWM_FREQ_SHIFT, value);
 
-		toff_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_CHOPCONF, TMC2209_TOFF_MASK, TMC2209_TOFF_SHIFT);	//保持トルクの設定
-		printf("toff_before : %ld\r\n", toff_value);
-		toff_value = 3;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_CHOPCONF, TMC2209_TOFF_MASK, TMC2209_TOFF_SHIFT,toff_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		toff_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_CHOPCONF, TMC2209_TOFF_MASK, TMC2209_TOFF_SHIFT);
-		printf("toff_after : %ld\r\n", toff_value);
+	value = 1;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_GCONF, TMC2209_MSTEP_REG_SELECT_MASK, TMC2209_MSTEP_REG_SELECT_SHIFT,value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		microstep_value = 256 >> TMC2209_FIELD_READ(&TMC2209, TMC2209_CHOPCONF, TMC2209_MRES_MASK, TMC2209_MRES_SHIFT);	//microstepの設定
-		printf("microstep_before : %ld\r\n", microstep_value);
-		microstep_value = 4;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_CHOPCONF, TMC2209_MRES_MASK, TMC2209_MRES_SHIFT,microstep_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		microstep_value = 256 >> TMC2209_FIELD_READ(&TMC2209, TMC2209_CHOPCONF, TMC2209_MRES_MASK, TMC2209_MRES_SHIFT);
-		printf("microstep_after : %ld\r\n", microstep_value);
+	value = 1;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_CHOPCONF, TMC2209_TOFF_MASK, TMC2209_TOFF_SHIFT,value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		IHOLDDELAY_value=4;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLDDELAY_MASK, TMC2209_IHOLDDELAY_SHIFT, IHOLDDELAY_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		IHOLDDELAY_value=TMC2209_FIELD_READ(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLDDELAY_MASK, TMC2209_IHOLDDELAY_SHIFT);
-		printf("IHOLDDELAY: %ld\r\n", IHOLDDELAY_value);
+	value = 4;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_CHOPCONF, TMC2209_MRES_MASK, TMC2209_MRES_SHIFT,value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		stallgard_setup_value=20;											//SG_RESULTと比較して、
-		tmc2209_writeInt(&TMC2209, TMC2209_SGTHRS, stallgard_setup_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		stallgard_setup_value = tmc2209_readInt(&TMC2209, TMC2209_SGTHRS);
-		printf("SGTHRS: %ld\r\n", stallgard_setup_value);
+	value=4;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_IHOLD_IRUN, TMC2209_IHOLDDELAY_MASK, TMC2209_IHOLDDELAY_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		TCOOLTHRS_value=1000;
+	value = 100;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_PWMCONF, TMC2209_PWM_GRAD_MASK, TMC2209_PWM_GRAD_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		tmc2209_writeInt(&TMC2209, TMC2209_TCOOLTHRS, TCOOLTHRS_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("TCOOLTHRS: %ld\r\n", TCOOLTHRS_value);
+	value=5;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_COOLCONF, TMC2209_SEMIN_MASK, TMC2209_SEMIN_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		SEMIN_value=5;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_COOLCONF, TMC2209_SEIMIN_MASK, TMC2209_SEIMIN_SHIFT, SEMIN_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("SEMIN: %ld\r\n", SEMIN_value);
+	value = 2;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_COOLCONF, TMC2209_SEMAX_MASK, TMC2209_SEMAX_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		SEMAX_value = 2;
-		TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_COOLCONF, TMC2209_SEIMIN_MASK, TMC2209_SEIMIN_SHIFT, SEMIN_value);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("SEMAX: %ld\r\n", SEMAX_value);
+	value = 1;
+	TMC2209_FIELD_UPDATE(&TMC2209, TMC2209_CHOPCONF, TMC2209_TBL_MASK, TMC2209_TBL_SHIFT, value);
+	tmc2209_periodicJob(&TMC2209, HAL_GetTick());
 
-		TBL_value = TMC2209_FIELD_READ(&TMC2209, TMC2209_CHOPCONF, TMC2209_TBL_MASK, TMC2209_TBL_SHIFT);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("TBL: %ld\r\n", TBL_value);
+	  printf("TMC SetUpOK\r\n");
 
-		stealthChop_value = TMC2209_FIELD_READ(&TMC2209, TMC2209_PWMCONF, TMC2209_PWM_GRAD_MASK, TMC2209_PWM_GRAD_SHIFT);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("stealthChop: %ld\r\n", stealthChop_value);
-
-		autoscale_value = TMC2209_FIELD_READ(&TMC2209, TMC2209_PWMCONF, TMC2209_PWM_AUTOSCALE_MASK, TMC2209_PWM_AUTOSCALE_SHIFT);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("autoscale: %ld\r\n", autoscale_value);
-
-		PWMAuto_value = tmc2209_readInt(&TMC2209,TMC2209_PWM_AUTO);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("PWMAuto: %ld\r\n", PWMAuto_value);
-
-		PWMAuto_scale = tmc2209_readInt(&TMC2209,TMC2209_PWMSCALE);
-		tmc2209_periodicJob(&TMC2209, HAL_GetTick());
-		printf("PWMSCALE: %ld\r\n", PWMAuto_scale);
 
 }
+
+char KeyCommand[1] = {0};
+//KeyCommand[0]=0;
 
 /* USER CODE END 0 */
 
@@ -537,6 +489,7 @@ void TMCsetup(){
   * @brief  The application entry point.
   * @retval int
   */
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -574,71 +527,71 @@ int main(void)
   steppers[0].acceleration = 1000;
   steppers[0].minStepInterval = 100;
   steppers[0].homing = 0;
-  steppers[0].dir_inv = 1;
-  steppers[0].seeking_vel = 100;
+  steppers[0].dir_inv = 0;
+  steppers[0].seeking_vel = 200;
   steppers[0].homing_vel = 200;
   steppers[0].pull_off = 500;
   steppers[0].stall_off=10000;
   get_uart_flag=0;
 
-char KeyCommand[1];
-KeyCommand[0]=0;
 printf("RMD Start\r\n");
+HAL_UART_Receive_IT(&huart2,(uint8_t *)KeyCommand,1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  HAL_UART_Receive_IT(&huart2,(uint8_t *)KeyCommand,sizeof(KeyCommand));
-	  HAL_UART_Transmit_IT(&huart2,(uint8_t *)KeyCommand,sizeof(KeyCommand));
-
-	  if(get_uart_flag==1){
-		  printf("rxbuf 2 %d\r\n",KeyCommand[0]);
-		  if(KeyCommand[0]!=0)
+//	  HAL_UART_Transmit_IT(&huart2,(uint8_t *)KeyCommand,1);
+	  get_uart_flag=0;
+	  while(!get_uart_flag){}
+	  printf("rxbuf 2 %d\r\n",KeyCommand[0]);
+	  if(KeyCommand[0]!=0)
+	  {
+		  switch(KeyCommand[0])
 		  {
-			  switch(KeyCommand[0])
-			  {
-				  case '0':
-					  TMCsetup();
-					  KeyCommand[0]=0;
-					  break;
-				  case '1':
-					  //HAL_UART_Transmit_IT(&huart2,(uint8_t *)front, sizeof(front));
-					  printf("1:start\r\n");
-					  prepareAbsoluteMovement(20000);
-					  runAndWait();
-					  HAL_Delay(100);
-					  printf("1:end\r\n");
-					  KeyCommand[0]=0;
-					  break;
+			  case '0':
+				  TMCsetup();
+				  KeyCommand[0]=0;
+				  break;
+			  case '1':
+				  //HAL_UART_Transmit_IT(&huart2,(uint8_t *)front, sizeof(front));
+				  printf("1:start\r\n");
+				  prepareAbsoluteMovement(2000);
+				  runAndWait();
+				  HAL_Delay(100);
+				  printf("1:end\r\n");
+				  KeyCommand[0]=0;
+				  break;
 
-				  case '2':
-					  printf("1:start\r\n");
-					  prepareAbsoluteMovement(-5000);
-					  runAndWait();
-					  HAL_Delay(100);
-					  printf("1:end\r\n");
-					  KeyCommand[0]=0;
-					  break;
+			  case '2':
+				  printf("1:start\r\n");
+				  prepareAbsoluteMovement(-2000);
+				  runAndWait();
+				  HAL_Delay(100);
+				  printf("1:end\r\n");
+				  KeyCommand[0]=0;
+				  break;
 
-				  case '3':
-					  stepperHoming();
-					  runAndWait();
-					  HAL_Delay(100);
-					  KeyCommand[0]=0;
+			  case '3':
+				  stepperHoming();
+				  runAndWait();
+				  HAL_Delay(100);
+				  KeyCommand[0]=0;
+				  break;
 
-				  case '4':
-					  AbsoluteReset();
-					  KeyCommand[0]=0;
-				  default:
-					  printf("NoCommand");
-					  KeyCommand[0]=0;
-					  break;
-			  }
-			  get_uart_flag=0;
+			  case '4':
+				  AbsoluteReset();
+				  KeyCommand[0]=0;
+				  break;
+			  default:
+				  printf("NoCommand");
+				  KeyCommand[0]=0;
+				  break;
 		  }
 	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -893,8 +846,9 @@ int _write(int file, char *ptr, int len)	//printfに必要
   HAL_UART_Transmit(&huart2,(uint8_t *)ptr,len,10);
   return len;
 }
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
+	HAL_UART_Receive_IT(&huart2,(uint8_t *)KeyCommand,1);
 	get_uart_flag = 1;
 	printf("uart_timer\r\n");
 

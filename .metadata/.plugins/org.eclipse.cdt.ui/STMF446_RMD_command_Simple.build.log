@@ -1,0 +1,10 @@
+20:29:20 **** Incremental Build of configuration Debug for project STMF446_RMD_command_Simple ****
+make -j7 all 
+arm-none-eabi-size   STMF446_RMD_command_Simple.elf 
+   text	   data	    bss	    dec	    hex	filename
+  24748	    120	   2040	  26908	   691c	STMF446_RMD_command_Simple.elf
+Finished building: default.size.stdout
+ 
+
+20:29:20 Build Finished. 0 errors, 0 warnings. (took 272ms)
+

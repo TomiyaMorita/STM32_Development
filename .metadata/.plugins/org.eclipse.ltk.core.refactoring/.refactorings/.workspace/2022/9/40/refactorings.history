@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;STMF446_RMD_command_Simple/STMF446_RMD_command Debug.launch&apos;" deleteContents="false" description="Delete resource &apos;STMF446_RMD_command_Simple/STMF446_RMD_command Debug.launch&apos;" element1="/STMF446_RMD_command_Simple/STMF446_RMD_command Debug.launch" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1664339139807"/>
+</session>
